@@ -1,93 +1,2861 @@
 <!DOCTYPE html>
 <html lang="es">
+
 <head>
+
     <meta charset="UTF-8">
+
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>El Quiznéfilo - P2P Sync & Soborno</title>
+
+    <title>El Quiznéfilo - Overlay & Control Panel</title>
+
+    <!-- Tailwind CSS para un diseño espectacular e instantáneo -->
+
     <script src="https://cdn.tailwindcss.com"></script>
+
+    <!-- Tipografía Cinematográfica -->
+
     <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@600;800&family=Space+Grotesk:wght@400;500;700&display=swap" rel="stylesheet">
+
     <style>
-        body { font-family: 'Space Grotesk', sans-serif; margin: 0; padding: 0; overflow: hidden; background-color: #000000; }
-        .text-cinema { font-family: 'Cinzel', serif; }
-        .neon-border { box-shadow: 0 0 15px rgba(245, 158, 11, 0.4), inset 0 0 15px rgba(245, 158, 11, 0.2); border: 2px solid rgba(245, 158, 11, 0.7); }
-        .animate-pulse-gold { animation: pulse-gold 2s infinite ease-in-out; }
-        @keyframes pulse-gold { 0%, 100% { transform: scale(1); opacity: 1; } 50% { transform: scale(1.02); opacity: 0.85; } }
-        .ruleta-transition { transition: transform 4.5s cubic-bezier(0.1, 0.8, 0.1, 1); }
-        .confetti-particle { position: absolute; width: 12px; height: 12px; animation: confetti-fall 4s linear infinite; pointer-events: none; z-index: 40; }
-        @keyframes confetti-fall { 0% { transform: translateY(-50px) rotate(0deg); opacity: 1; } 100% { transform: translateY(110vh) rotate(360deg); opacity: 0; } }
+
+        body {
+
+            font-family: 'Space Grotesk', sans-serif;
+
+            margin: 0;
+
+            padding: 0;
+
+            overflow: hidden;
+
+            background-color: #00ff00;
+
+        }
+
+        .text-cinema {
+
+            font-family: 'Cinzel', serif;
+
+        }
+
+        /* Efectos de Brillo Neon */
+
+        .neon-border {
+
+            box-shadow: 0 0 15px rgba(245, 158, 11, 0.4), inset 0 0 15px rgba(245, 158, 11, 0.2);
+
+            border: 2px solid rgba(245, 158, 11, 0.7);
+
+        }
+
+        .neon-text {
+
+            text-shadow: 0 0 8px rgba(245, 158, 11, 0.6);
+
+        }
+
+        .neon-border-green {
+
+            box-shadow: 0 0 20px rgba(16, 185, 129, 0.6), inset 0 0 10px rgba(16, 185, 129, 0.4);
+
+            border: 2px solid rgba(16, 185, 129, 0.9);
+
+        }
+
+        .neon-border-red {
+
+            box-shadow: 0 0 20px rgba(239, 68, 68, 0.6), inset 0 0 10px rgba(239, 68, 68, 0.4);
+
+            border: 2px solid rgba(239, 68, 68, 0.9);
+
+        }
+
+        .neon-border-blue {
+
+            box-shadow: 0 0 20px rgba(59, 130, 246, 0.6);
+
+            border: 2px solid rgba(59, 130, 246, 0.9);
+
+        }
+
+        .neon-border-emerald {
+
+            box-shadow: 0 0 20px rgba(16, 185, 129, 0.6);
+
+            border: 2px solid rgba(16, 185, 129, 0.9);
+
+        }
+
+        .neon-border-purple {
+
+            box-shadow: 0 0 25px rgba(168, 85, 247, 0.8), inset 0 0 15px rgba(168, 85, 247, 0.4);
+
+            border: 3px solid rgba(168, 85, 247, 1);
+
+        }
+
+        /* Animaciones */
+
+        @keyframes pulse-gold {
+
+            0%, 100% { transform: scale(1); opacity: 1; }
+
+            50% { transform: scale(1.02); opacity: 0.85; }
+
+        }
+
+        .animate-pulse-gold {
+
+            animation: pulse-gold 2s infinite ease-in-out;
+
+        }
+
+        @keyframes shake {
+
+            0%, 100% { transform: translateX(0); }
+
+            25% { transform: translateX(-6px); }
+
+            75% { transform: translateX(6px); }
+
+        }
+
+        .animate-shake {
+
+            animation: shake 0.2s 3 ease-in-out;
+
+        }
+
+        /* Transición de Ruleta */
+
+        .ruleta-transition {
+
+            transition: transform 4.5s cubic-bezier(0.1, 0.8, 0.1, 1);
+
+        }
+
+        /* Confeti nativo animado */
+
+        @keyframes confetti-fall {
+
+            0% { transform: translateY(-50px) rotate(0deg); opacity: 1; }
+
+            100% { transform: translateY(110vh) rotate(360deg); opacity: 0; }
+
+        }
+
+        .confetti-particle {
+
+            position: absolute;
+
+            width: 12px;
+
+            height: 12px;
+
+            animation: confetti-fall 4s linear infinite;
+
+            pointer-events: none;
+
+            z-index: 40;
+
+        }
+
     </style>
+
 </head>
+
 <body class="text-white select-none">
 
+
+
+    <!-- PANTALLA DE SELECCIÓN DE ROL (Solo se muestra la primera vez para elegir modo) -->
+
     <div id="setup-screen" class="fixed inset-0 bg-slate-950 flex flex-col items-center justify-center z-50 p-6">
-        <h1 class="text-cinema text-6xl text-amber-500 mb-10">EL QUIZNÉFILO</h1>
-        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-            <button onclick="setRole('overlay')" class="p-8 bg-slate-900 border border-slate-700 rounded-2xl hover:border-amber-500">Overlay (OBS)</button>
-            <button onclick="setRole('control')" class="p-8 bg-slate-900 border border-slate-700 rounded-2xl hover:border-amber-500">Panel Control</button>
+
+        <div class="max-w-3xl w-full text-center space-y-8">
+
+            <h1 class="text-cinema text-5xl md:text-6xl font-extrabold text-amber-500 tracking-wider neon-text">EL QUIZNÉFILO</h1>
+
+            <p class="text-slate-400 text-lg">Selecciona cómo deseas inicializar esta pantalla para tu directo.</p>
+
+            
+
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+
+                <!-- Tarjeta para Overlay OBS -->
+
+                <button onclick="setRole('overlay')" class="flex flex-col items-center p-6 bg-slate-900 border border-slate-800 rounded-2xl hover:border-amber-500 hover:bg-slate-900/80 transition-all duration-300 group">
+
+                    <div class="w-16 h-16 bg-amber-500/10 rounded-full flex items-center justify-center text-amber-500 mb-4 group-hover:scale-110 transition-transform">
+
+                        <svg class="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 10l4.553-2.276A1 1 0 0121 8.618v6.764a1 1 0 01-1.447.894L15 14M5 18h8a2 2 0 002-2V8a2 2 0 00-2-2H5a2 2 0 00-2 2v8a2 2 0 002 2z"></path></svg>
+
+                    </div>
+
+                    <span class="text-xl font-bold mb-2">Pantalla de OBS (Overlay)</span>
+
+                    <span class="text-sm text-slate-500 text-center">Fondo totalmente transparente. Añádelo a OBS como Fuente de Navegador a 1920x1080.</span>
+
+                </button>
+
+
+
+                <!-- Tarjeta para Panel de Control -->
+
+                <button onclick="setRole('control')" class="flex flex-col items-center p-6 bg-slate-900 border border-slate-800 rounded-2xl hover:border-amber-500 hover:bg-slate-900/80 transition-all duration-300 group">
+
+                    <div class="w-16 h-16 bg-blue-500/10 rounded-full flex items-center justify-center text-blue-500 mb-4 group-hover:scale-110 transition-transform">
+
+                        <svg class="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6V4m0 2a2 2 0 100 4m0-4a2 2 0 110 4m-6 8a2 2 0 100-4m0 4a2 2 0 110-4m0 4v2m0-6V4m6 6v10m6-2a2 2 0 100-4m0 4a2 2 0 110-4m0 4v2m0-6V4"></path></svg>
+
+                    </div>
+
+                    <span class="text-xl font-bold mb-2">Panel de Control</span>
+
+                    <span class="text-sm text-slate-500 text-center">Para controlar las preguntas, activar comodines, ver aciertos/fallos y girar la ruleta desde tu monitor secundario.</span>
+
+                </button>
+
+
+
+                <!-- Tarjeta para Demo / Todo-en-Uno -->
+
+                <button onclick="setRole('demo')" class="flex flex-col items-center p-6 bg-slate-900 border border-slate-800 rounded-2xl hover:border-amber-500 hover:bg-slate-900/80 transition-all duration-300 group">
+
+                    <div class="w-16 h-16 bg-emerald-500/10 rounded-full flex items-center justify-center text-emerald-500 mb-4 group-hover:scale-110 transition-transform">
+
+                        <svg class="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9.75 17L9 20l-1 1h8l-1-1-.75-3M3 13h18M5 17h14a2 2 0 002-2V5a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"></path></svg>
+
+                    </div>
+
+                    <span class="text-xl font-bold mb-2">Modo Demo Local</span>
+
+                    <span class="text-sm text-slate-500 text-center">Pantalla dividida con el Control Panel a un lado y el Overlay al otro. Ideal para probarlo antes del directo.</span>
+
+                </button>
+
+            </div>
+
+            <div class="pt-4 text-xs text-slate-600">
+
+                Diseñado para <span class="text-amber-500/80">La butaca de Marty</span> y <span class="text-amber-500/80">El sótano de Marty y Doc</span>
+
+            </div>
+
         </div>
+
     </div>
+
+
+
+
+
+    <!-- ========================================================== -->
+
+    <!-- MODO OVERLAY: Lo que se captura en OBS (Fondo transparente) -->
+
+    <!-- ========================================================== -->
 
     <div id="overlay-view" class="hidden absolute inset-0 w-[1920px] h-[1080px] pointer-events-none overflow-hidden">
-        <div class="absolute top-10 left-12 flex items-center space-x-3 px-6 py-2 bg-slate-950/80 rounded-xl border border-amber-500/40 neon-border">
-            <span class="text-cinema font-extrabold text-2xl text-amber-500">EL QUIZNÉFILO</span>
-        </div>
-        <div id="ov-question-block" class="absolute bottom-24 left-12 right-12 transition-all duration-500 opacity-0">
-            <div class="w-full px-8 py-5 bg-slate-950/90 border-2 border-amber-500/60 rounded-2xl">
-                <h2 id="ov-question-text" class="text-2xl font-bold">Cargando...</h2>
-            </div>
-            <div id="ov-prize-container" class="hidden absolute inset-0 flex items-center justify-center z-30">
-                <div class="p-10 bg-slate-950 border-4 border-purple-500 rounded-3xl text-center">
-                    <div id="ov-prize-emoji" class="text-8xl"></div>
-                    <h3 id="ov-prize-title" class="text-4xl font-black text-purple-400"></h3>
-                </div>
-            </div>
-        </div>
-        <div id="ov-confetti-area" class="absolute inset-0 overflow-hidden pointer-events-none"></div>
-    </div>
 
-    <div id="control-view" class="hidden min-h-screen bg-slate-950 p-6">
-        <h1 class="text-3xl font-bold text-amber-500 mb-6">PANEL DE CONTROL</h1>
-        <button onclick="sendQuestionToOverlay()" class="w-full py-4 bg-amber-500 text-black font-black rounded-xl mb-4">🚀 Lanzar a OBS</button>
         
-        <button onclick="acceptSoborno()" class="w-full py-4 bg-purple-600 hover:bg-purple-500 text-white font-black rounded-xl uppercase shadow-lg mb-6">
-            💸 ACEPTAR SOBORNO (Recuperar Comodines)
-        </button>
 
-        <div class="grid grid-cols-2 gap-4">
-            <button onclick="resolveAnswer(true)" class="py-4 bg-emerald-600 text-white font-bold rounded-xl">¡ACIERTO!</button>
-            <button onclick="resolveAnswer(false)" class="py-4 bg-red-600 text-white font-bold rounded-xl">¡FALLO!</button>
+        <!-- Contenedor del Título de la Sección superior -->
+
+        <div class="absolute top-10 left-12 flex items-center space-x-4">
+
+            <div class="px-6 py-2 bg-slate-950/80 backdrop-blur-md rounded-xl border border-amber-500/40 neon-border flex items-center space-x-3">
+
+                <div class="w-3 h-3 bg-red-600 rounded-full animate-pulse"></div>
+
+                <span class="text-cinema font-extrabold text-2xl tracking-widest text-amber-500 neon-text">EL QUIZNÉFILO</span>
+
+            </div>
+
         </div>
+
+
+
+        <!-- Indicador de Comodines en Pantalla -->
+
+        <div class="absolute top-10 right-12 flex space-x-4">
+
+            <!-- Comodín Llamada -->
+
+            <div id="ov-wildcard-llamada" class="flex items-center justify-center w-14 h-14 bg-slate-950/90 rounded-full border border-amber-500/40 transition-all duration-500">
+
+                <span class="text-xl">📞</span>
+
+            </div>
+
+            <!-- Comodín Chat -->
+
+            <div id="ov-wildcard-chat" class="flex items-center justify-center w-14 h-14 bg-slate-950/90 rounded-full border border-amber-500/40 transition-all duration-500">
+
+                <span class="text-xl">💬</span>
+
+            </div>
+
+            <!-- Comodín Ruleta -->
+
+            <div id="ov-wildcard-ruleta" class="flex items-center justify-center w-14 h-14 bg-slate-950/90 rounded-full border border-amber-500/40 transition-all duration-500">
+
+                <span class="text-xl">🎡</span>
+
+            </div>
+
+        </div>
+
+
+
+        <!-- TEMPORIZADOR MULTIUSO (LLAMADA O CHAT) -->
+
+        <div id="ov-timer-container" class="absolute inset-0 flex items-center justify-center pointer-events-none hidden">
+
+            <!-- El color del borde y el texto cambian dinámicamente según el tipo de temporizador con clases inyectadas -->
+
+            <div id="ov-timer-card" class="px-10 py-8 bg-slate-950/95 border-2 rounded-3xl flex flex-col items-center space-y-2 shadow-2xl animate-pulse-gold">
+
+                <span id="ov-timer-title" class="text-sm tracking-widest font-bold uppercase">TIEMPO</span>
+
+                <span id="ov-timer-number" class="text-9xl font-black font-mono">60</span>
+
+            </div>
+
+        </div>
+
+
+
+        <!-- RULETA INTERACTIVA EN PANTALLA -->
+
+        <div id="ov-ruleta-container" class="absolute inset-0 flex items-center justify-center pointer-events-none hidden">
+
+            <div class="relative w-[540px] h-[540px] bg-slate-950/95 p-6 rounded-full border-4 border-amber-500/70 shadow-2xl flex items-center justify-center">
+
+                <!-- Flecha indicadora superior -->
+
+                <div class="absolute -top-4 left-1/2 -translate-x-1/2 z-20 w-0 h-0 border-l-[20px] border-l-transparent border-r-[20px] border-r-transparent border-t-[35px] border-t-amber-500 filter drop-shadow"></div>
+
+                <!-- El disco giratorio SVG -->
+
+                <svg id="ov-ruleta-wheel" class="w-full h-full ruleta-transition" viewBox="0 0 100 100">
+
+                    <!-- Los sectores se generarán dinámicamente con JS -->
+
+                </svg>
+
+                <!-- Botón central decorativo -->
+
+                <div class="absolute w-24 h-24 bg-slate-900 border-4 border-amber-500 rounded-full flex items-center justify-center shadow-lg z-10">
+
+                    <span class="text-cinema text-amber-400 font-black text-[10px] text-center leading-tight">RULETA<br>DEL CAOS</span>
+
+                </div>
+
+            </div>
+
+        </div>
+
+
+
+        <!-- CONTENEDOR DE CELEBRACIÓN DE REGALOS (PANTALLA DE ALERTA DE HITOS) -->
+
+        <div id="ov-prize-container" class="absolute inset-0 flex items-center justify-center pointer-events-none hidden z-30 transition-all duration-500">
+
+            <!-- Capa con el confeti nativo que se inyecta con JS -->
+
+            <div id="ov-confetti-area" class="absolute inset-0 overflow-hidden pointer-events-none"></div>
+
+            
+
+            <div class="px-12 py-10 bg-slate-950/98 rounded-3xl flex flex-col items-center text-center space-y-5 shadow-2xl border-4 border-purple-500 neon-border-purple animate-pulse-gold max-w-xl relative">
+
+                <div class="absolute -top-10 bg-purple-600 px-6 py-2 rounded-full border border-purple-400 text-sm font-black tracking-widest uppercase shadow-md text-white">
+
+                    ⭐ Hito Desbloqueado ⭐
+
+                </div>
+
+                <div id="ov-prize-emoji" class="text-8xl filter drop-shadow-md">🍿</div>
+
+                <h3 id="ov-prize-title" class="text-cinema text-4xl font-black text-purple-400 leading-tight">PREMIO DESBLOQUEADO</h3>
+
+                <p id="ov-prize-desc" class="text-slate-300 text-base font-semibold leading-relaxed max-w-md">¡Has superado el nivel requerido para llevarte este pedazo de premio!</p>
+
+                <div class="pt-2 text-xs text-purple-400 font-bold uppercase tracking-widest">El sótano de Marty y Doc</div>
+
+            </div>
+
+        </div>
+
+
+
+        <!-- BLOQUE DE PREGUNTA Y RESPUESTAS (PARTE INFERIOR) -->
+
+        <div id="ov-question-block" class="absolute bottom-24 left-12 right-12 transition-all duration-500 opacity-0 transform translate-y-10">
+
+            <!-- La Pregunta -->
+
+            <div class="w-full px-8 py-5 bg-slate-950/90 border-2 border-amber-500/60 rounded-2xl mb-4 relative overflow-hidden flex items-center justify-between shadow-2xl">
+
+                <!-- Elemento estético de fondo del cartel de la pregunta -->
+
+                <div class="absolute inset-y-0 left-0 w-3 bg-amber-500"></div>
+
+                <div class="flex-1 pl-4">
+
+                    <span id="ov-question-level" class="text-xs uppercase tracking-widest text-amber-500 font-bold block mb-1">Nivel 1</span>
+
+                    <h2 id="ov-question-text" class="text-xl md:text-2xl font-bold tracking-wide">¿Cargando pregunta del Quiznéfilo?</h2>
+
+                </div>
+
+                <!-- Marcador de puntuación actual -->
+
+                <div class="px-5 py-2 bg-amber-500/10 rounded-xl border border-amber-500/30 text-right min-w-[120px]">
+
+                    <span class="text-xs text-amber-500 block uppercase font-bold tracking-wider">Cine-Puntos</span>
+
+                    <span id="ov-points-display" class="text-xl font-extrabold font-mono text-amber-400">0 pts</span>
+
+                </div>
+
+            </div>
+
+
+
+            <!-- Las Respuestas en rejilla 2x2 -->
+
+            <div class="grid grid-cols-2 gap-4">
+
+                <!-- Opción A -->
+
+                <div id="ov-opt-A" class="relative overflow-hidden px-8 py-4 bg-slate-950/95 border border-slate-800 rounded-xl flex items-center transition-all duration-300">
+
+                    <span class="text-amber-500 font-bold text-lg mr-4 select-none">A:</span>
+
+                    <span id="ov-opt-text-A" class="text-base md:text-lg font-medium">Cargando opción...</span>
+
+                </div>
+
+                <!-- Opción B -->
+
+                <div id="ov-opt-B" class="relative overflow-hidden px-8 py-4 bg-slate-950/95 border border-slate-800 rounded-xl flex items-center transition-all duration-300">
+
+                    <span class="text-amber-500 font-bold text-lg mr-4 select-none">B:</span>
+
+                    <span id="ov-opt-text-B" class="text-base md:text-lg font-medium">Cargando opción...</span>
+
+                </div>
+
+                <!-- Opción C -->
+
+                <div id="ov-opt-C" class="relative overflow-hidden px-8 py-4 bg-slate-950/95 border border-slate-800 rounded-xl flex items-center transition-all duration-300">
+
+                    <span class="text-amber-500 font-bold text-lg mr-4 select-none">C:</span>
+
+                    <span id="ov-opt-text-C" class="text-base md:text-lg font-medium">Cargando opción...</span>
+
+                </div>
+
+                <!-- Opción D -->
+
+                <div id="ov-opt-D" class="relative overflow-hidden px-8 py-4 bg-slate-950/95 border border-slate-800 rounded-xl flex items-center transition-all duration-300">
+
+                    <span class="text-amber-500 font-bold text-lg mr-4 select-none">D:</span>
+
+                    <span id="ov-opt-text-D" class="text-base md:text-lg font-medium">Cargando opción...</span>
+
+                </div>
+
+            </div>
+
+        </div>
+
+
+
+        <!-- LÍNEA DE PROGRESO DE PREGUNTAS (ESTILO CONCURSILLO DE 1 AL 15) -->
+
+        <div class="absolute bottom-6 left-12 right-12 h-14 bg-slate-950/90 border border-slate-800 rounded-2xl flex items-center justify-between px-6 shadow-2xl">
+
+            <span class="text-xs font-bold text-amber-500/80 uppercase tracking-widest mr-2 select-none">Ruta al Óscar:</span>
+
+            <div class="flex-1 flex justify-between items-center px-4 relative">
+
+                <!-- Línea de fondo -->
+
+                <div class="absolute inset-x-4 h-0.5 bg-slate-800 z-0"></div>
+
+                <!-- Los 15 niveles de dificultad -->
+
+                <!-- Generados dinámicamente con JS -->
+
+                <div id="ov-timeline-nodes" class="w-full flex justify-between z-10"></div>
+
+            </div>
+
+        </div>
+
     </div>
+
+
+
+
+
+    <!-- ========================================================== -->
+
+    <!-- MODO PANEL DE CONTROL: Lo que abres en tu segundo monitor -->
+
+    <!-- ========================================================== -->
+
+    <div id="control-view" class="hidden min-h-screen bg-slate-950 p-6 overflow-y-auto">
+
+        
+
+        <!-- Header del Panel -->
+
+        <div class="flex flex-col md:flex-row md:items-center md:justify-between border-b border-slate-800 pb-5 mb-6">
+
+            <div>
+
+                <div class="flex items-center space-x-2">
+
+                    <span class="w-3 h-3 bg-blue-500 rounded-full animate-pulse"></span>
+
+                    <h1 class="text-cinema text-3xl font-extrabold text-amber-500">CONTROL DE CONCURSILLO</h1>
+
+                </div>
+
+                <p class="text-xs text-slate-500 uppercase mt-1">Conexión de sincronización de navegador activa (LocalStorage)</p>
+
+            </div>
+
+            
+
+            <div class="flex space-x-3 mt-4 md:mt-0">
+
+                <button onclick="resetGame()" class="px-4 py-2 bg-red-600/10 hover:bg-red-600 border border-red-500 text-red-400 hover:text-white font-bold rounded-lg transition-all">
+
+                    Resetear Concurso
+
+                </button>
+
+                <div class="px-4 py-2 bg-slate-900 border border-slate-800 text-slate-400 rounded-lg text-sm flex items-center space-x-2">
+
+                    <span class="w-2 h-2 bg-green-500 rounded-full"></span>
+
+                    <span>OBS Conectado</span>
+
+                </div>
+
+            </div>
+
+        </div>
+
+
+
+        <!-- Grid de dos columnas -->
+
+        <div class="grid grid-cols-1 lg:grid-cols-12 gap-6">
+
+            
+
+            <!-- Columna Izquierda: Control del Juego (8 de 12) -->
+
+            <div class="lg:col-span-8 space-y-6">
+
+                
+
+                <!-- 1. Estado de Pregunta Actual y Acciones de Lanzamiento -->
+
+                <div class="bg-slate-900 border border-slate-800 rounded-2xl p-6">
+
+                    <div class="flex justify-between items-center mb-4">
+
+                        <span class="text-xs font-bold text-amber-500 uppercase tracking-widest">Pregunta Seleccionada</span>
+
+                        <div class="flex space-x-2">
+
+                            <button onclick="prevQuestion()" class="p-2 bg-slate-800 rounded-lg hover:bg-slate-700 text-white">&larr; Ant</button>
+
+                            <span id="ctrl-current-question-num" class="px-4 py-2 bg-slate-950 font-bold rounded-lg text-amber-500 border border-slate-800">Pregunta 1/15</span>
+
+                            <button onclick="nextQuestion()" class="p-2 bg-slate-800 rounded-lg hover:bg-slate-700 text-white">Sig &rarr;</button>
+
+                        </div>
+
+                    </div>
+
+
+
+                    <div class="bg-slate-950 p-5 rounded-xl border border-slate-800 mb-6">
+
+                        <span id="ctrl-question-level" class="text-xs font-bold text-slate-500 uppercase block mb-1">Dificultad</span>
+
+                        <h2 id="ctrl-question-text" class="text-lg font-bold text-white mb-4">¿Pregunta?</h2>
+
+                        
+
+                        <div class="grid grid-cols-2 gap-3">
+
+                            <div class="p-3 rounded-lg border border-slate-800 bg-slate-900 flex items-center">
+
+                                <span id="ctrl-opt-label-A" class="text-amber-500 font-bold mr-2">A:</span>
+
+                                <span id="ctrl-opt-A" class="text-slate-300">Opción</span>
+
+                            </div>
+
+                            <div class="p-3 rounded-lg border border-slate-800 bg-slate-900 flex items-center">
+
+                                <span id="ctrl-opt-label-B" class="text-amber-500 font-bold mr-2">B:</span>
+
+                                <span id="ctrl-opt-B" class="text-slate-300">Opción</span>
+
+                            </div>
+
+                            <div class="p-3 rounded-lg border border-slate-800 bg-slate-900 flex items-center">
+
+                                <span id="ctrl-opt-label-C" class="text-amber-500 font-bold mr-2">C:</span>
+
+                                <span id="ctrl-opt-C" class="text-slate-300">Opción</span>
+
+                            </div>
+
+                            <div class="p-3 rounded-lg border border-slate-800 bg-slate-900 flex items-center">
+
+                                <span id="ctrl-opt-label-D" class="text-amber-500 font-bold mr-2">D:</span>
+
+                                <span id="ctrl-opt-D" class="text-slate-300">Opción</span>
+
+                            </div>
+
+                        </div>
+
+                    </div>
+
+
+
+                    <!-- Botón de Lanzar a OBS -->
+
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+
+                        <button onclick="sendQuestionToOverlay()" class="w-full py-3 bg-amber-500 hover:bg-amber-600 text-slate-950 font-black rounded-xl tracking-wider uppercase transition-all shadow-lg shadow-amber-500/10">
+
+                            🚀 Mostrar Pregunta en OBS
+
+                        </button>
+
+                        <button onclick="hideQuestionOnOverlay()" class="w-full py-3 bg-slate-800 hover:bg-slate-700 text-slate-300 font-bold rounded-xl tracking-wider uppercase transition-all">
+
+                            🙈 Ocultar Todo de OBS
+
+                        </button>
+
+                    </div>
+
+                </div>
+
+
+
+                <!-- 2. Botones de Selección y Resolución (Interactividad en Directo) -->
+
+                <div class="bg-slate-900 border border-slate-800 rounded-2xl p-6">
+
+                    <span class="text-xs font-bold text-amber-500 uppercase tracking-widest block mb-4">Fases de la Respuesta</span>
+
+                    
+
+                    <div class="grid grid-cols-2 md:grid-cols-4 gap-3 mb-6">
+
+                        <!-- Botón para iluminar en tensión -->
+
+                        <button onclick="setTensionOption('A')" class="py-3 bg-slate-800 hover:bg-amber-500/20 border border-slate-700 hover:border-amber-500 rounded-xl font-bold transition-all text-sm">
+
+                            Marcar A (Tensión)
+
+                        </button>
+
+                        <button onclick="setTensionOption('B')" class="py-3 bg-slate-800 hover:bg-amber-500/20 border border-slate-700 hover:border-amber-500 rounded-xl font-bold transition-all text-sm">
+
+                            Marcar B (Tensión)
+
+                        </button>
+
+                        <button onclick="setTensionOption('C')" class="py-3 bg-slate-800 hover:bg-amber-500/20 border border-slate-700 hover:border-amber-500 rounded-xl font-bold transition-all text-sm">
+
+                            Marcar C (Tensión)
+
+                        </button>
+
+                        <button onclick="setTensionOption('D')" class="py-3 bg-slate-800 hover:bg-amber-500/20 border border-slate-700 hover:border-amber-500 rounded-xl font-bold transition-all text-sm">
+
+                            Marcar D (Tensión)
+
+                        </button>
+
+                    </div>
+
+
+
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+
+                        <button onclick="resolveAnswer(true)" class="py-4 bg-emerald-600 hover:bg-emerald-500 text-white font-extrabold rounded-xl uppercase tracking-wider transition-all flex items-center justify-center space-x-2">
+
+                            <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
+
+                            <span>Resolver: ¡ACIERTO!</span>
+
+                        </button>
+
+                        <button onclick="resolveAnswer(false)" class="py-4 bg-red-600 hover:bg-red-500 text-white font-extrabold rounded-xl uppercase tracking-wider transition-all flex items-center justify-center space-x-2">
+
+                            <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 14l2-2m0 0l2-2m-2 2l-2-2m2 2l2 2m7-2a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
+
+                            <span>Resolver: ¡FALLO!</span>
+
+                        </button>
+
+                    </div>
+
+                </div>
+
+
+
+                <!-- SECCIÓN DE PREMIOS ACTIVOS (Novedad para controlar las alertas en directo) -->
+
+                <div class="bg-slate-900 border border-slate-800 rounded-2xl p-6">
+
+                    <div class="flex items-center justify-between mb-4">
+
+                        <span class="text-xs font-bold text-purple-400 uppercase tracking-widest block">Premios e Hitos en Pantalla</span>
+
+                        <span id="ctrl-prize-active-badge" class="px-2.5 py-1 bg-purple-500/10 text-purple-400 border border-purple-500/30 rounded-lg text-xs font-bold animate-pulse hidden">Premio Activo en Directo</span>
+
+                    </div>
+
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4 bg-slate-950 p-4 rounded-xl border border-slate-800">
+
+                        <div>
+
+                            <span class="text-xs text-slate-500 uppercase block font-bold">Último Premio Alcanzado</span>
+
+                            <span id="ctrl-prize-active-text" class="text-lg font-bold text-white">Ninguno de momento</span>
+
+                        </div>
+
+                        <div class="flex items-center">
+
+                            <button id="ctrl-dismiss-prize-btn" onclick="dismissPrize()" class="w-full py-3 bg-purple-600 hover:bg-purple-500 text-white font-black rounded-xl text-sm transition-all shadow-md shadow-purple-500/10 uppercase tracking-wider" disabled>
+
+                                🚨 Quitar Alerta de Premio de OBS
+
+                            </button>
+
+                        </div>
+
+                    </div>
+
+                </div>
+
+
+
+                <!-- 3. Comodines y Ruleta -->
+
+                <div class="bg-slate-900 border border-slate-800 rounded-2xl p-6">
+
+                    <span class="text-xs font-bold text-amber-500 uppercase tracking-widest block mb-4">Gestión de Comodines Interactivos</span>
+
+                    
+
+                    <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+
+                        <!-- Comodín de la llamada -->
+
+                        <div class="bg-slate-950 p-4 rounded-xl border border-slate-800 flex flex-col justify-between">
+
+                            <div class="flex items-center justify-between mb-3">
+
+                                <span class="font-bold text-sm">📞 La Llamada (60s)</span>
+
+                                <span id="ctrl-badge-llamada" class="px-2 py-1 bg-green-500/10 text-green-500 border border-green-500/20 rounded text-xs font-bold uppercase">Listo</span>
+
+                            </div>
+
+                            <button id="ctrl-btn-llamada" onclick="triggerLlamadaWildcard()" class="w-full py-2 bg-blue-600 hover:bg-blue-500 text-white font-bold rounded-lg transition-all text-xs">
+
+                                Activar Llamada
+
+                            </button>
+
+                        </div>
+
+
+
+                        <!-- Comodín del chat -->
+
+                        <div class="bg-slate-950 p-4 rounded-xl border border-slate-800 flex flex-col justify-between">
+
+                            <div class="flex items-center justify-between mb-3">
+
+                                <span class="font-bold text-sm">💬 El Chat (60s)</span>
+
+                                <span id="ctrl-badge-chat" class="px-2 py-1 bg-green-500/10 text-green-500 border border-green-500/20 rounded text-xs font-bold uppercase">Listo</span>
+
+                            </div>
+
+                            <button id="ctrl-btn-chat" onclick="triggerChatWildcard()" class="w-full py-2 bg-blue-600 hover:bg-blue-500 text-white font-bold rounded-lg transition-all text-xs">
+
+                                Activar Chat
+
+                            </button>
+
+                        </div>
+
+
+
+                        <!-- Comodín Ruleta del Caos -->
+
+                        <div class="bg-slate-950 p-4 rounded-xl border border-slate-800 flex flex-col justify-between">
+
+                            <div class="flex items-center justify-between mb-3">
+
+                                <span class="font-bold text-sm">🎡 Ruleta del Caos</span>
+
+                                <span id="ctrl-badge-ruleta" class="px-2 py-1 bg-green-500/10 text-green-500 border border-green-500/20 rounded text-xs font-bold uppercase">Listo</span>
+
+                            </div>
+
+                            <!-- Muestra qué resultado dio tras girar -->
+
+                            <div id="ctrl-ruleta-result" class="text-xs font-semibold text-amber-500 mb-2 text-center h-5"></div>
+
+                            <button id="ctrl-btn-ruleta" onclick="triggerRuletaWildcard()" class="w-full py-2 bg-blue-600 hover:bg-blue-500 text-white font-bold rounded-lg transition-all text-xs">
+
+                                Girar Ruleta
+
+                            </button>
+
+                        </div>
+
+                    </div>
+
+                </div>
+
+
+
+            </div>
+
+
+
+            <!-- Columna Derecha: Base de Datos y Personalización (4 de 12) -->
+
+            <div class="lg:col-span-4 space-y-6">
+
+                
+
+                <!-- Editor de preguntas en directo -->
+
+                <div class="bg-slate-900 border border-slate-800 rounded-2xl p-6">
+
+                    <span class="text-xs font-bold text-amber-500 uppercase tracking-widest block mb-3">Editor de Preguntas (JSON)</span>
+
+                    <p class="text-xs text-slate-400 mb-4">Puedes cambiar las preguntas antes de empezar tu concurso. Haz clic en "Guardar Cambios" para cargarlas.</p>
+
+                    <textarea id="ctrl-questions-json" class="w-full h-80 bg-slate-950 text-slate-300 font-mono text-xs p-3 rounded-lg border border-slate-800 focus:border-amber-500 focus:outline-none focus:ring-1 focus:ring-amber-500 mb-4" placeholder="[{}]"></textarea>
+
+                    
+
+                    <button onclick="saveQuestions()" class="w-full py-2.5 bg-blue-600 hover:bg-blue-500 text-white font-bold rounded-xl transition-all text-sm shadow-md">
+
+                        💾 Guardar y Aplicar Preguntas
+
+                    </button>
+
+                </div>
+
+
+
+                <!-- Guía rápida para OBS -->
+
+                <div class="bg-slate-900 border border-slate-800 rounded-2xl p-6 space-y-4">
+
+                    <span class="text-xs font-bold text-amber-500 uppercase tracking-widest block">Ajustes Rápidos para OBS</span>
+
+                    <ul class="text-xs text-slate-400 space-y-2 list-disc pl-4">
+
+                        <li>Añade la fuente de navegador con ancho <strong class="text-white">1920</strong> y alto <strong class="text-white">1080</strong>.</li>
+
+                        <li>Configura tu micrófono y audio de escritorio en OBS para que se oigan los efectos sintetizados.</li>
+
+                        <li>Usa la opción de <strong class="text-white">"Interactuar"</strong> en OBS haciendo clic derecho sobre la fuente si quieres probar la visualización desde allí de manera rápida.</li>
+
+                    </ul>
+
+                </div>
+
+
+
+            </div>
+
+
+
+        </div>
+
+    </div>
+
+
+
+
+
+    <!-- ========================================================== -->
+
+    <!-- MODO DEMO: Pantalla Dividida para pruebas locales          -->
+
+    <!-- ========================================================== -->
+
+    <div id="demo-view" class="hidden min-h-screen bg-slate-950 flex flex-col">
+
+        <div class="bg-slate-900 border-b border-slate-800 p-4 flex justify-between items-center shrink-0">
+
+            <h1 class="text-cinema text-xl text-amber-500">MODO DEMO LOCAL (PANTALLA DIVIDIDA)</h1>
+
+            <button onclick="location.hash = ''; location.reload();" class="px-4 py-1.5 bg-slate-800 hover:bg-slate-700 text-sm font-bold rounded-lg">Volver al Menú</button>
+
+        </div>
+
+        <div class="flex-1 flex overflow-hidden">
+
+            <!-- Izquierda: Panel de Control -->
+
+            <div class="w-1/2 border-r border-slate-800 overflow-y-auto">
+
+                <!-- Se inyectará el contenido del panel -->
+
+                <div id="demo-control-container"></div>
+
+            </div>
+
+            <!-- Derecha: OBS Overlay con fondo negro simulado -->
+
+            <div class="w-1/2 bg-slate-900 relative flex items-center justify-center overflow-hidden">
+
+                <div class="absolute inset-0 bg-gradient-to-br from-slate-950 via-slate-900 to-slate-950 opacity-90"></div>
+
+                <!-- El overlay se escala para encajar a la mitad -->
+
+                <div class="scale-[0.48] transform origin-center shrink-0 relative w-[1920px] h-[1080px] border border-dashed border-amber-500/30">
+
+                    <div id="demo-overlay-container" class="absolute inset-0"></div>
+
+                </div>
+
+            </div>
+
+        </div>
+
+    </div>
+
+
+
+
+
+    <!-- ========================================================== -->
+
+    <!-- MOTOR LOGIC DE JUEGO & SINCRONIZACIÓN                      -->
+
+    <!-- ========================================================== -->
 
     <script>
-        const pubsubURL = "https://v3.pjax.com/pubsub/sotano_marty_doc_quiznefilo_room";
-        let gameState = { currentIdx: 0, questions: [], overlayVisible: false, prizeActive: false, wildcard_llamada_used: false, wildcard_chat_used: false, wildcard_ruleta_used: false };
-        let currentRole = "";
 
-        const eventSource = new EventSource(pubsubURL);
-        eventSource.onmessage = (e) => {
-            const packet = JSON.parse(e.data);
-            if (packet.sender !== currentRole) { gameState = packet.state; applyStateToUI(); }
+        // SOTANO DE MARTY Y DOC - PREGUNTAS DEL QUIZNÉFILO (Cine general de Fácil a Difícil)
+
+        const defaultQuestions = [
+
+            {
+
+                level: "Nivel 1 (Fácil)",
+
+                points: 100,
+
+                question: "¿Qué famoso cineasta dirigió la icónica película de terror veraniego 'Tiburón' en 1975?",
+
+                options: ["A: James Cameron", "B: Steven Spielberg", "C: John Carpenter", "D: Alfred Hitchcock"],
+
+                correct: "B"
+
+            },
+
+            {
+
+                level: "Nivel 2 (Fácil)",
+
+                points: 200,
+
+                question: "¿Quién es el verdadero portador de la identidad de Darth Vader bajo su máscara en 'Star Wars'?",
+
+                options: ["A: Obi-Wan Kenobi", "B: Luke Skywalker", "C: Anakin Skywalker", "D: Han Solo"],
+
+                correct: "C"
+
+            },
+
+            {
+
+                level: "Nivel 3 (Fácil)",
+
+                points: 300,
+
+                question: "¿Cuántos premios Óscar consiguió ganar en total la película romántica 'Titanic' (1997)?",
+
+                options: ["A: 11 premios Óscar", "B: 9 premios Óscar", "C: 13 premios Óscar", "D: 8 premios Óscar"],
+
+                correct: "A"
+
+            },
+
+            {
+
+                level: "Nivel 4 (Fácil)",
+
+                points: 500,
+
+                question: "En la trilogía de 'El Señor de los Anillos', ¿cómo se refiere cariñosamente Gollum al Anillo Único?",
+
+                options: ["A: Mi joya", "B: El oro precioso", "C: Mi herencia", "D: Mi tesoro"],
+
+                correct: "D"
+
+            },
+
+            {
+
+                level: "Nivel 5 (Fácil) - ⭐ Hito 1 ⭐",
+
+                points: 1000,
+
+                question: "¿Cuál es el nombre del leal vaquero de juguete protagonista en la franquicia 'Toy Story' de Pixar?",
+
+                options: ["A: Woody", "B: Buzz Lightyear", "C: Slinky", "D: Perdigón"],
+
+                correct: "A",
+
+                prize: {
+
+                    emoji: "🍿",
+
+                    title: "¡PAQUETE DE PALOMITAS!",
+
+                    desc: "¡Hito superado! Te acabas de ganar un fantástico paquete de palomitas del Mercadona para disfrutar a tope del directo."
+
+                }
+
+            },
+
+            {
+
+                level: "Nivel 6 (Medio)",
+
+                points: 2000,
+
+                question: "¿Qué carismático actor interpretó al gigante Rubeus Hagrid en la franquicia cinematográfica de 'Harry Potter'?",
+
+                options: ["A: Alan Rickman", "B: Richard Harris", "C: Robbie Coltrane", "D: Gary Oldman"],
+
+                correct: "C"
+
+            },
+
+            {
+
+                level: "Nivel 7 (Medio)",
+
+                points: 4000,
+
+                question: "¿En qué mítica obra del suspense de Alfred Hitchcock (1960) vemos la famosísima escena de la ducha?",
+
+                options: ["A: Vértigo", "B: Psicosis", "C: Con la muerte en los talones", "D: Los Pájaros"],
+
+                correct: "B"
+
+            },
+
+            {
+
+                level: "Nivel 8 (Medio)",
+
+                points: 8000,
+
+                question: "¿Quién se metió en la piel del heroico general Máximo Décimo Meridio en la aclamada 'Gladiator' (2000)?",
+
+                options: ["A: Russell Crowe", "B: Joaquin Phoenix", "C: Mel Gibson", "D: Brad Pitt"],
+
+                correct: "A"
+
+            },
+
+            {
+
+                level: "Nivel 9 (Medio)",
+
+                points: 16000,
+
+                question: "En la aclamada 'Pulp Fiction' de Quentin Tarantino, ¿qué deporte practica profesionalmente el personaje de Butch?",
+
+                options: ["A: Kickboxing", "B: Lucha libre", "C: Atletismo", "D: Boxeo"],
+
+                correct: "D"
+
+            },
+
+            {
+
+                level: "Nivel 10 (Medio) - ⭐ Hito 2 ⭐",
+
+                points: 32000,
+
+                question: "¿Qué genial actor ganó un Óscar póstumo por su brutal encarnación del Joker en 'El Caballero Oscuro' (2008)?",
+
+                options: ["A: Jack Nicholson", "B: Joaquin Phoenix", "C: Heath Ledger", "D: Jared Leto"],
+
+                correct: "C",
+
+                prize: {
+
+                    emoji: "🖼️",
+
+                    title: "¡PÓSTER DE ALIEXPRESS!",
+
+                    desc: "¡Espectacular! Te llevas un póster impreso de tu peli favorita directamente importado con amor desde AliExpress."
+
+                }
+
+            },
+
+            {
+
+                level: "Nivel 11 (Difícil)",
+
+                points: 64000,
+
+                question: "¿Qué célebre actor interpretó al joven Vito Corleone en 'El Padrino: Parte II' (1974)?",
+
+                options: ["A: Al Pacino", "B: Robert De Niro", "C: Marlon Brando", "D: James Caan"],
+
+                correct: "B"
+
+            },
+
+            {
+
+                level: "Nivel 12 (Difícil)",
+
+                points: 125000,
+
+                question: "¿Cuál es el nombre civil y real del célebre hacker conocido como 'Neo' en la película 'Matrix' (1999)?",
+
+                options: ["A: Thomas Anderson", "B: John Smith", "C: David Lightman", "D: Arthur Pendelton"],
+
+                correct: "A"
+
+            },
+
+            {
+
+                level: "Nivel 13 (Difícil)",
+
+                points: 250000,
+
+                question: "¿Qué largometraje surcoreano hizo historia en 2020 al ganar por primera vez el Óscar a Mejor Película?",
+
+                options: ["A: Oldboy", "B: Train to Busan", "C: Memories of Murder", "D: Parásitos"],
+
+                correct: "D"
+
+            },
+
+            {
+
+                level: "Nivel 14 (Difícil)",
+
+                points: 500000,
+
+                question: "En el clásico 'Ciudadano Kane' (1941) de Orson Welles, ¿qué objeto resulta ser la icónica palabra 'Rosebud'?",
+
+                options: ["A: Una llave antigua", "B: Una fotografía de su madre", "C: Un trineo de nieve", "D: Una bola de nieve decorativa"],
+
+                correct: "C"
+
+            },
+
+            {
+
+                level: "Nivel 15 (Difícil) - ⭐ Hito Final ⭐",
+
+                points: 1000000,
+
+                question: "¿Cuáles son las tres únicas producciones cinematográficas en ganar el récord absoluto de 11 Premios Óscar?",
+
+                options: ["A: Ben-Hur, Titanic y El Retorno del Rey", "B: Ben-Hur, West Side Story y Lo que el viento se llevó", "C: Titanic, La lista de Schindler y Lo que el viento se llevó", "D: El Retorno del Rey, Titanic y Avatar"],
+
+                correct: "A",
+
+                prize: {
+
+                    emoji: "🎓🎟️",
+
+                    title: "¡DIPLOMA CINÉFILO + ENTRADA!",
+
+                    desc: "¡ERES LEYENDA! Te llevas tu codiciado Diploma de Cinéfilo de Élite de Marty y Doc, más una entrada gratis al cine de tu zona."
+
+                }
+
+            }
+
+        ];
+
+
+
+        // SINTETIZADOR DE AUDIO INTEGRADO (Web Audio API)
+
+        const AudioFX = {
+
+            ctx: null,
+
+
+
+            init() {
+
+                if (!this.ctx) {
+
+                    this.ctx = new (window.AudioContext || window.webkitAudioContext)();
+
+                }
+
+            },
+
+
+
+            playBeep(freq, duration, type = 'sine') {
+
+                this.init();
+
+                const osc = this.ctx.createOscillator();
+
+                const gain = this.ctx.createGain();
+
+                
+
+                osc.type = type;
+
+                osc.frequency.setValueAtTime(freq, this.ctx.currentTime);
+
+                
+
+                gain.gain.setValueAtTime(0.1, this.ctx.currentTime);
+
+                gain.gain.exponentialRampToValueAtTime(0.01, this.ctx.currentTime + duration);
+
+                
+
+                osc.connect(gain);
+
+                gain.connect(this.ctx.destination);
+
+                
+
+                osc.start();
+
+                osc.stop(this.ctx.currentTime + duration);
+
+            },
+
+
+
+            playSuccess() {
+
+                this.init();
+
+                const now = this.ctx.currentTime;
+
+                const notes = [261.63, 329.63, 392.00, 523.25]; // C4, E4, G4, C5
+
+                notes.forEach((freq, idx) => {
+
+                    const osc = this.ctx.createOscillator();
+
+                    const gain = this.ctx.createGain();
+
+                    osc.type = 'triangle';
+
+                    osc.frequency.setValueAtTime(freq, now + idx * 0.1);
+
+                    gain.gain.setValueAtTime(0.12, now + idx * 0.1);
+
+                    gain.gain.exponentialRampToValueAtTime(0.005, now + idx * 0.1 + 0.3);
+
+                    osc.connect(gain);
+
+                    gain.connect(this.ctx.destination);
+
+                    osc.start(now + idx * 0.1);
+
+                    osc.stop(now + idx * 0.1 + 0.3);
+
+                });
+
+            },
+
+
+
+            playError() {
+
+                this.init();
+
+                const now = this.ctx.currentTime;
+
+                const notes = [180.00, 175.00];
+
+                notes.forEach((freq) => {
+
+                    const osc = this.ctx.createOscillator();
+
+                    const gain = this.ctx.createGain();
+
+                    osc.type = 'sawtooth';
+
+                    osc.frequency.setValueAtTime(freq, now);
+
+                    osc.frequency.linearRampToValueAtTime(freq - 40, now + 0.6);
+
+                    gain.gain.setValueAtTime(0.15, now);
+
+                    gain.gain.exponentialRampToValueAtTime(0.01, now + 0.6);
+
+                    osc.connect(gain);
+
+                    gain.connect(this.ctx.destination);
+
+                    osc.start();
+
+                    osc.stop(now + 0.6);
+
+                });
+
+            },
+
+
+
+            playPrizeFanfare() {
+
+                this.init();
+
+                const now = this.ctx.currentTime;
+
+                const notes = [261.63, 329.63, 392.00, 523.25, 392.00, 523.25, 659.25, 783.99]; // C4, E4, G4, C5, G4, C5, E5, G5
+
+                notes.forEach((freq, idx) => {
+
+                    const osc = this.ctx.createOscillator();
+
+                    const gain = this.ctx.createGain();
+
+                    osc.type = 'sine';
+
+                    osc.frequency.setValueAtTime(freq, now + idx * 0.12);
+
+                    gain.gain.setValueAtTime(0.12, now + idx * 0.12);
+
+                    gain.gain.exponentialRampToValueAtTime(0.01, now + idx * 0.12 + 0.4);
+
+                    osc.connect(gain);
+
+                    gain.connect(this.ctx.destination);
+
+                    osc.start(now + idx * 0.12);
+
+                    osc.stop(now + idx * 0.12 + 0.5);
+
+                });
+
+            },
+
+
+
+            playTension() {
+
+                this.playBeep(220, 0.4, 'triangle');
+
+            },
+
+
+
+            playTick() {
+
+                this.playBeep(880, 0.05, 'sine');
+
+            },
+
+
+
+            playClick() {
+
+                this.playBeep(440, 0.03, 'sine');
+
+            }
+
         };
 
-        function transmit() {
-            fetch(pubsubURL, { method: 'POST', body: JSON.stringify({ sender: currentRole, state: gameState }) });
+
+
+        // Ruleta de Opciones del Caos (Distribución y colores de eliminación)
+
+        const ruletaItems = [
+
+            { text: "ELIMINA 1", color: "#b45309", count: 1 },
+
+            { text: "ELIMINA 2", color: "#1d4ed8", count: 2 },
+
+            { text: "ELIMINA 0", color: "#b91c1c", count: 0 },
+
+            { text: "ELIMINA 3", color: "#15803d", count: 3 },
+
+            { text: "ELIMINA 1", color: "#b45309", count: 1 },
+
+            { text: "ELIMINA 2", color: "#1d4ed8", count: 2 },
+
+            { text: "ELIMINA 0", color: "#b91c1c", count: 0 },
+
+            { text: "ELIMINA 2", color: "#6d28d9", count: 2 }
+
+        ];
+
+
+
+        // Estado inicial del Concurso
+
+        let gameState = {
+
+            currentIdx: 0,
+
+            questions: [...defaultQuestions],
+
+            overlayVisible: false,
+
+            highlightedOption: null, // "A", "B", "C", "D"
+
+            resolvedState: null, // "correct" o "wrong"
+
+            wildcard_llamada_used: false,
+
+            wildcard_chat_used: false,
+
+            wildcard_ruleta_used: false,
+
+            wildcard_llamada_active: false,
+
+            wildcard_chat_active: false,
+
+            wildcard_ruleta_active: false,
+
+            eliminatedOptions: [], // Almacena las incorrectas eliminadas en el turno actual
+
+            points: 0,
+
+            ruletaTargetAngle: 0,
+
+            ruletaTargetIndex: -1,
+
+            ruletaFinished: false,
+
+            timerSecs: 60,
+
+            timerType: "chat", // "llamada" o "chat"
+
+            timerActive: false,
+
+            prizeActive: false, // Indica si hay un cartel de premio en pantalla
+
+            activePrizeData: null // Datos del premio actual {emoji, title, desc}
+
+        };
+
+
+
+        let currentRole = "";
+
+        let timerInterval = null;
+
+
+
+        window.addEventListener('load', () => {
+
+            const savedState = localStorage.getItem('quiznefilo_state');
+
+            if (savedState) {
+
+                gameState = JSON.parse(savedState);
+
+            } else {
+
+                saveStateToLocalStorage();
+
+            }
+
+            handleRouting();
+
+        });
+
+
+
+        // Escucha cambios de LocalStorage en tiempo real (Sincronización interactiva entre pantallas)
+
+        window.addEventListener('storage', (e) => {
+
+            if (e.key === 'quiznefilo_state') {
+
+                const oldState = {...gameState};
+
+                gameState = JSON.parse(e.newValue);
+
+                applyStateToUI();
+
+
+
+                // Detección de activación de premio para lanzar sonido en el Overlay de OBS
+
+                if (gameState.prizeActive && !oldState.prizeActive) {
+
+                    AudioFX.playPrizeFanfare();
+
+                    startConfettiShower();
+
+                } else if (!gameState.prizeActive && oldState.prizeActive) {
+
+                    stopConfettiShower();
+
+                }
+
+
+
+                // Detección de ticks de sonido del cronómetro
+
+                if (gameState.timerActive && oldState.timerActive && gameState.timerSecs < oldState.timerSecs) {
+
+                    if (gameState.timerSecs <= 5 && gameState.timerSecs > 0) {
+
+                        // Tono más agudo de tensión final
+
+                        AudioFX.playBeep(1200, 0.1, 'sine');
+
+                    } else if (gameState.timerSecs === 0) {
+
+                        AudioFX.playError();
+
+                    } else {
+
+                        AudioFX.playTick();
+
+                    }
+
+                }
+
+            }
+
+        });
+
+
+
+        function handleRouting() {
+
+            const hash = window.location.hash;
+
+            if (hash === '#overlay') {
+
+                currentRole = "overlay";
+
+                document.getElementById('setup-screen').classList.add('hidden');
+
+                document.getElementById('overlay-view').classList.remove('hidden');
+
+                document.body.style.backgroundColor = "#00ff00";
+
+                buildTimelineNodes();
+
+                buildRuletaSVG();
+
+                applyStateToUI();
+
+            } else if (hash === '#control') {
+
+                currentRole = "control";
+
+                document.getElementById('setup-screen').classList.add('hidden');
+
+                document.getElementById('control-view').classList.remove('hidden');
+
+                document.body.style.backgroundColor = "#020617";
+
+                applyStateToUI();
+
+            } else if (hash === '#demo') {
+
+                currentRole = "demo";
+
+                document.getElementById('setup-screen').classList.add('hidden');
+
+                document.getElementById('demo-view').classList.remove('hidden');
+
+                document.body.style.backgroundColor = "#020617";
+
+                
+
+                // Inyectar clones
+
+                const controlClone = document.getElementById('control-view').cloneNode(true);
+
+                controlClone.id = "demo-control";
+
+                controlClone.classList.remove('hidden');
+
+                document.getElementById('demo-control-container').appendChild(controlClone);
+
+
+
+                const overlayClone = document.getElementById('overlay-view').cloneNode(true);
+
+                overlayClone.id = "demo-overlay";
+
+                overlayClone.classList.remove('hidden');
+
+                document.getElementById('demo-overlay-container').appendChild(overlayClone);
+
+
+
+                bindDemoEvents();
+
+
+
+                buildTimelineNodes('demo-overlay');
+
+                buildRuletaSVG('demo-overlay');
+
+                applyStateToUI();
+
+            } else {
+
+                document.getElementById('setup-screen').classList.remove('hidden');
+
+            }
+
+        }
+
+
+
+        function setRole(role) {
+
+            window.location.hash = role;
+
+            handleRouting();
+
+        }
+
+
+
+        function bindDemoEvents() {
+
+            const demoArea = document.getElementById('demo-control-container');
+
+            demoArea.querySelectorAll('[onclick]').forEach(elem => {
+
+                const clickAttr = elem.getAttribute('onclick');
+
+                elem.removeAttribute('onclick');
+
+                elem.addEventListener('click', () => {
+
+                    eval(clickAttr);
+
+                });
+
+            });
+
+        }
+
+
+
+        function saveStateToLocalStorage() {
+
+            localStorage.setItem('quiznefilo_state', JSON.stringify(gameState));
+
             applyStateToUI();
+
         }
 
-        function acceptSoborno() {
-            gameState.wildcard_llamada_used = false;
-            gameState.wildcard_chat_used = false;
-            gameState.wildcard_ruleta_used = false;
-            gameState.prizeActive = true;
-            gameState.activePrizeData = { emoji: "💸", title: "¡SOBORNO ACEPTADO!", desc: "Comodines restaurados." };
-            transmit();
+
+
+        // Construir la ruleta circular en formato SVG
+
+        function buildRuletaSVG(containerId = 'overlay-view') {
+
+            const container = document.getElementById(containerId);
+
+            if (!container) return;
+
+            const svg = container.querySelector('#ov-ruleta-wheel');
+
+            if (!svg) return;
+
+
+
+            svg.innerHTML = "";
+
+            const numSectors = ruletaItems.length;
+
+            const anglePerSector = 360 / numSectors;
+
+
+
+            ruletaItems.forEach((item, i) => {
+
+                const startAngle = i * anglePerSector;
+
+                const endAngle = (i + 1) * anglePerSector;
+
+                
+
+                const rad = Math.PI / 180;
+
+                const x1 = 50 + 50 * Math.cos((startAngle - 90) * rad);
+
+                const y1 = 50 + 50 * Math.sin((startAngle - 90) * rad);
+
+                const x2 = 50 + 50 * Math.cos((endAngle - 90) * rad);
+
+                const y2 = 50 + 50 * Math.sin((endAngle - 90) * rad);
+
+
+
+                const largeArcFlag = anglePerSector > 180 ? 1 : 0;
+
+                const pathData = `M 50 50 L ${x1} ${y1} A 50 50 0 ${largeArcFlag} 1 ${x2} ${y2} Z`;
+
+
+
+                const path = document.createElementNS("http://www.w3.org/2000/svg", "path");
+
+                path.setAttribute("d", pathData);
+
+                path.setAttribute("fill", item.color);
+
+                path.setAttribute("stroke", "#1e293b");
+
+                path.setAttribute("stroke-width", "0.5");
+
+                svg.appendChild(path);
+
+
+
+                const text = document.createElementNS("http://www.w3.org/2000/svg", "text");
+
+                const textAngle = startAngle + (anglePerSector / 2);
+
+                text.setAttribute("x", "50");
+
+                text.setAttribute("y", "12");
+
+                text.setAttribute("fill", "#ffffff");
+
+                text.setAttribute("font-size", "2.8");
+
+                text.setAttribute("font-weight", "bold");
+
+                text.setAttribute("text-anchor", "middle");
+
+                text.setAttribute("transform", `rotate(${textAngle}, 50, 50)`);
+
+                text.textContent = item.text;
+
+                svg.appendChild(text);
+
+            });
+
         }
 
-        function applyStateToUI() { /* ... lógica de UI ... */ }
-        function setRole(role) { window.location.hash = role; location.reload(); }
-        
-        // ... resto de funciones (resolveAnswer, sendQuestionToOverlay, etc) ...
+
+
+        // Construir los marcadores horizontales de avance (1 al 15)
+
+        function buildTimelineNodes(containerId = 'overlay-view') {
+
+            const container = document.getElementById(containerId);
+
+            if (!container) return;
+
+            const nodesDiv = container.querySelector('#ov-timeline-nodes');
+
+            if (!nodesDiv) return;
+
+
+
+            nodesDiv.innerHTML = "";
+
+            for (let i = 0; i < 15; i++) {
+
+                const node = document.createElement('div');
+
+                node.id = `node-${i}`;
+
+                node.className = "w-6 h-6 rounded-full bg-slate-800 border-2 border-slate-700 flex items-center justify-center text-[10px] font-black transition-all duration-300 relative";
+
+                node.textContent = i + 1;
+
+                
+
+                // Indicadores de hitos de regalos sobre los nodos correspondientes
+
+                if (i === 4 || i === 9 || i === 14) {
+
+                    node.classList.add('scale-110');
+
+                    const award = document.createElement('span');
+
+                    award.className = "absolute -top-5 text-[8px] font-bold text-purple-400 tracking-wider flex items-center gap-0.5";
+
+                    award.innerHTML = i === 14 ? "🎁 1M" : i === 9 ? "🎁 32K" : "🎁 1K";
+
+                    node.appendChild(award);
+
+                }
+
+
+
+                nodesDiv.appendChild(node);
+
+            }
+
+        }
+
+
+
+        // Generar confeti dinámico en CSS/HTML
+
+        function startConfettiShower() {
+
+            const viewports = ['overlay-view', 'demo-overlay'];
+
+            viewports.forEach(vpId => {
+
+                const vp = document.getElementById(vpId);
+
+                if (!vp) return;
+
+                const container = vp.querySelector('#ov-confetti-area');
+
+                if (!container) return;
+
+
+
+                container.innerHTML = "";
+
+                const colors = ['#f59e0b', '#a855f7', '#10b981', '#3b82f6', '#ef4444', '#ec4899'];
+
+                for (let i = 0; i < 40; i++) {
+
+                    const particle = document.createElement('div');
+
+                    particle.className = "confetti-particle";
+
+                    particle.style.left = Math.random() * 100 + "vw";
+
+                    particle.style.backgroundColor = colors[Math.floor(Math.random() * colors.length)];
+
+                    particle.style.animationDelay = Math.random() * 3 + "s";
+
+                    particle.style.animationDuration = (2 + Math.random() * 3) + "s";
+
+                    particle.style.width = (6 + Math.random() * 8) + "px";
+
+                    particle.style.height = (6 + Math.random() * 8) + "px";
+
+                    container.appendChild(particle);
+
+                }
+
+            });
+
+        }
+
+
+
+        function stopConfettiShower() {
+
+            const viewports = ['overlay-view', 'demo-overlay'];
+
+            viewports.forEach(vpId => {
+
+                const vp = document.getElementById(vpId);
+
+                if (!vp) return;
+
+                const container = vp.querySelector('#ov-confetti-area');
+
+                if (container) container.innerHTML = "";
+
+            });
+
+        }
+
+
+
+        // Renderizar el estado global del juego en la UI correspondiente
+
+        function applyStateToUI() {
+
+            // Sincronizar el editor del JSON si está en pantalla
+
+            const jsonTextarea = document.getElementById('ctrl-questions-json');
+
+            if (jsonTextarea && document.activeElement !== jsonTextarea) {
+
+                jsonTextarea.value = JSON.stringify(gameState.questions, null, 2);
+
+            }
+
+
+
+            // Datos de la pregunta actual
+
+            const q = gameState.questions[gameState.currentIdx] || { level: "Fin", points: 0, question: "Se han completado todas las preguntas", options: ["", "", "", ""], correct: "" };
+
+
+
+            // ACTUALIZAR PANELES DE CONTROL (NATIVOS O CLONADOS EN DEMO)
+
+            document.querySelectorAll('#ctrl-current-question-num').forEach(el => el.textContent = `Pregunta ${gameState.currentIdx + 1}/${gameState.questions.length}`);
+
+            document.querySelectorAll('#ctrl-question-level').forEach(el => el.textContent = q.level + ` - (${q.points} Cine-Puntos)`);
+
+            document.querySelectorAll('#ctrl-question-text').forEach(el => el.textContent = q.question);
+
+            
+
+            ["A", "B", "C", "D"].forEach((opt, idx) => {
+
+                document.querySelectorAll(`#ctrl-opt-${opt}`).forEach(el => el.textContent = q.options[idx] || "");
+
+                
+
+                document.querySelectorAll(`#ctrl-opt-label-${opt}`).forEach(el => {
+
+                    if (q.correct === opt) {
+
+                        el.className = "text-emerald-500 font-extrabold mr-2";
+
+                        el.textContent = `${opt} (OK):`;
+
+                    } else {
+
+                        el.className = "text-amber-500 font-bold mr-2";
+
+                        el.textContent = `${opt}:`;
+
+                    }
+
+                });
+
+            });
+
+
+
+            // Actualizar botones e información de Premios en el Control
+
+            document.querySelectorAll('#ctrl-prize-active-text').forEach(el => {
+
+                if (gameState.prizeActive && gameState.activePrizeData) {
+
+                    el.textContent = `${gameState.activePrizeData.emoji} ${gameState.activePrizeData.title}`;
+
+                } else {
+
+                    el.textContent = "Ninguno activo actualmente";
+
+                }
+
+            });
+
+
+
+            document.querySelectorAll('#ctrl-prize-active-badge').forEach(el => {
+
+                if (gameState.prizeActive) el.classList.remove('hidden');
+
+                else el.classList.add('hidden');
+
+            });
+
+
+
+            document.querySelectorAll('#ctrl-dismiss-prize-btn').forEach(btn => {
+
+                btn.disabled = !gameState.prizeActive;
+
+                if (!gameState.prizeActive) {
+
+                    btn.classList.add('opacity-40', 'cursor-not-allowed');
+
+                } else {
+
+                    btn.classList.remove('opacity-40', 'cursor-not-allowed');
+
+                }
+
+            });
+
+
+
+            // Mostrar el resultado de la Ruleta en el Panel del Presentador
+
+            document.querySelectorAll('#ctrl-ruleta-result').forEach(el => {
+
+                if (gameState.ruletaTargetIndex !== -1) {
+
+                    const sector = ruletaItems[gameState.ruletaTargetIndex];
+
+                    if (gameState.ruletaFinished) {
+
+                        el.textContent = `Resultado: ¡${sector.text}!`;
+
+                        el.className = "text-xs font-bold text-emerald-500 mb-2 text-center h-5";
+
+                    } else {
+
+                        el.textContent = "Girando...";
+
+                        el.className = "text-xs font-bold text-amber-500 mb-2 text-center h-5 animate-pulse";
+
+                    }
+
+                } else {
+
+                    el.textContent = "";
+
+                }
+
+            });
+
+
+
+            // Actualizar insignias de Comodines en Control
+
+            updateWildcardBadges('llamada', gameState.wildcard_llamada_used, gameState.wildcard_llamada_active);
+
+            updateWildcardBadges('chat', gameState.wildcard_chat_used, gameState.wildcard_chat_active);
+
+            updateWildcardBadges('ruleta', gameState.wildcard_ruleta_used, gameState.wildcard_ruleta_active);
+
+
+
+            // ACTUALIZAR OVERLAYS (OBS O CLONADOS EN DEMO)
+
+            const viewports = ['overlay-view', 'demo-overlay'];
+
+            viewports.forEach(vpId => {
+
+                const vp = document.getElementById(vpId);
+
+                if (!vp) return;
+
+
+
+                // Visibilidad General del Bloque de Preguntas
+
+                const qBlock = vp.querySelector('#ov-question-block');
+
+                if (gameState.overlayVisible) {
+
+                    qBlock.classList.remove('opacity-0', 'translate-y-10');
+
+                } else {
+
+                    qBlock.classList.add('opacity-0', 'translate-y-10');
+
+                }
+
+
+
+                // Cargar Textos de Preguntas
+
+                vp.querySelector('#ov-question-level').textContent = q.level;
+
+                vp.querySelector('#ov-question-text').textContent = q.question;
+
+                vp.querySelector('#ov-points-display').textContent = `${gameState.points} pts`;
+
+
+
+                // Cargar Opciones de respuestas
+
+                ["A", "B", "C", "D"].forEach((opt, idx) => {
+
+                    const textEl = vp.querySelector(`#ov-opt-text-${opt}`);
+
+                    const boxEl = vp.querySelector(`#ov-opt-${opt}`);
+
+                    textEl.textContent = q.options[idx] || "";
+
+                    
+
+                    boxEl.className = "relative overflow-hidden px-8 py-4 bg-slate-950/95 border border-slate-800 rounded-xl flex items-center transition-all duration-300";
+
+
+
+                    // Ruleta de eliminación de respuestas activa (Oculta las opciones dictadas por la ruleta cuando termina de girar)
+
+                    if (gameState.ruletaFinished && gameState.eliminatedOptions && gameState.eliminatedOptions.includes(opt)) {
+
+                        boxEl.classList.add('opacity-0', 'pointer-events-none');
+
+                    }
+
+                });
+
+
+
+                // Tensión de Selección y Respuestas correctas
+
+                if (gameState.highlightedOption) {
+
+                    const boxEl = vp.querySelector(`#ov-opt-${gameState.highlightedOption}`);
+
+                    if (boxEl) {
+
+                        boxEl.className = "relative overflow-hidden px-8 py-4 bg-amber-500/20 border-2 border-amber-500 rounded-xl flex items-center transition-all duration-300 animate-pulse-gold";
+
+                    }
+
+                }
+
+
+
+                // Resolución final de la respuesta
+
+                if (gameState.resolvedState) {
+
+                    const correctBox = vp.querySelector(`#ov-opt-${q.correct}`);
+
+                    if (correctBox) {
+
+                        correctBox.className = "relative overflow-hidden px-8 py-4 bg-emerald-500/20 border-2 border-emerald-500 rounded-xl flex items-center transition-all duration-300 neon-border-green";
+
+                    }
+
+
+
+                    // Si el concursante falló, se marca su opción en rojo
+
+                    if (gameState.resolvedState === "wrong" && gameState.highlightedOption && gameState.highlightedOption !== q.correct) {
+
+                        const wrongBox = vp.querySelector(`#ov-opt-${gameState.highlightedOption}`);
+
+                        if (wrongBox) {
+
+                            wrongBox.className = "relative overflow-hidden px-8 py-4 bg-red-500/20 border-2 border-red-500 rounded-xl flex items-center transition-all duration-300 neon-border-red animate-shake";
+
+                        }
+
+                    }
+
+                }
+
+
+
+                // Renderizar los nodos de avance (del 1 al 15)
+
+                for (let i = 0; i < 15; i++) {
+
+                    const node = vp.querySelector(`#node-${i}`);
+
+                    if (node) {
+
+                        node.className = "w-6 h-6 rounded-full flex items-center justify-center text-[10px] font-black transition-all duration-300 relative z-10";
+
+                        
+
+                        if (i < gameState.currentIdx) {
+
+                            node.classList.add('bg-emerald-600', 'border-emerald-500', 'text-white');
+
+                        } else if (i === gameState.currentIdx) {
+
+                            node.classList.add('bg-amber-500', 'border-amber-400', 'text-slate-950', 'scale-125', 'neon-border');
+
+                        } else {
+
+                            node.classList.add('bg-slate-950', 'border-slate-800', 'text-slate-500');
+
+                        }
+
+                    }
+
+                }
+
+
+
+                // Renderizar Comodines en el Overlay superior
+
+                updateOverlayWildcardBadge(vp.querySelector('#ov-wildcard-llamada'), gameState.wildcard_llamada_used);
+
+                updateOverlayWildcardBadge(vp.querySelector('#ov-wildcard-chat'), gameState.wildcard_chat_used);
+
+                updateOverlayWildcardBadge(vp.querySelector('#ov-wildcard-ruleta'), gameState.wildcard_ruleta_used);
+
+
+
+                // Temporizador Multiuso (Llamada / Chat)
+
+                const timerContainer = vp.querySelector('#ov-timer-container');
+
+                const timerCard = vp.querySelector('#ov-timer-card');
+
+                const timerTitle = vp.querySelector('#ov-timer-title');
+
+                const timerNum = vp.querySelector('#ov-timer-number');
+
+                
+
+                if (gameState.timerActive) {
+
+                    timerContainer.classList.remove('hidden');
+
+                    timerNum.textContent = gameState.timerSecs;
+
+                    
+
+                    if (gameState.timerType === "llamada") {
+
+                        timerTitle.textContent = "⏱️ TIEMPO LLAMADA 📞";
+
+                        timerCard.className = "px-10 py-8 bg-slate-950/95 border-2 rounded-3xl flex flex-col items-center space-y-2 shadow-2xl border-emerald-500 neon-border-emerald text-emerald-400";
+
+                    } else {
+
+                        timerTitle.textContent = "⏱️ TIEMPO SOTANEROS (CHAT) 💬";
+
+                        timerCard.className = "px-10 py-8 bg-slate-950/95 border-2 rounded-3xl flex flex-col items-center space-y-2 shadow-2xl border-blue-500 neon-border-blue text-blue-400";
+
+                    }
+
+                } else {
+
+                    timerContainer.classList.add('hidden');
+
+                }
+
+
+
+                // Ruleta de eliminación interactiva en pantalla
+
+                const ruletaContainer = vp.querySelector('#ov-ruleta-container');
+
+                const ruletaWheel = vp.querySelector('#ov-ruleta-wheel');
+
+                if (gameState.wildcard_ruleta_active) {
+
+                    ruletaContainer.classList.remove('hidden');
+
+                    ruletaWheel.style.transform = `rotate(${gameState.ruletaTargetAngle}deg)`;
+
+                } else {
+
+                    ruletaContainer.classList.add('hidden');
+
+                }
+
+
+
+                // Pantalla de Alerta de Premio de OBS
+
+                const prizeContainer = vp.querySelector('#ov-prize-container');
+
+                if (gameState.prizeActive && gameState.activePrizeData) {
+
+                    prizeContainer.classList.remove('hidden');
+
+                    vp.querySelector('#ov-prize-emoji').textContent = gameState.activePrizeData.emoji;
+
+                    vp.querySelector('#ov-prize-title').textContent = gameState.activePrizeData.title;
+
+                    vp.querySelector('#ov-prize-desc').textContent = gameState.activePrizeData.desc;
+
+                } else {
+
+                    prizeContainer.classList.add('hidden');
+
+                }
+
+            });
+
+        }
+
+
+
+        function updateWildcardBadges(id, used, active) {
+
+            document.querySelectorAll(`#ctrl-badge-${id}`).forEach(el => {
+
+                if (used) {
+
+                    el.className = "px-2 py-1 bg-red-500/10 text-red-500 border border-red-500/20 rounded text-xs font-bold uppercase";
+
+                    el.textContent = "Gastado";
+
+                } else if (active) {
+
+                    el.className = "px-2 py-1 bg-amber-500/10 text-amber-500 border border-amber-500/20 rounded text-xs font-bold uppercase animate-pulse";
+
+                    el.textContent = "Activo";
+
+                } else {
+
+                    el.className = "px-2 py-1 bg-green-500/10 text-green-500 border border-green-500/20 rounded text-xs font-bold uppercase";
+
+                    el.textContent = "Disponible";
+
+                }
+
+            });
+
+
+
+            document.querySelectorAll(`#ctrl-btn-${id}`).forEach(btn => {
+
+                btn.disabled = used;
+
+                if (used) {
+
+                    btn.classList.add('opacity-40', 'cursor-not-allowed');
+
+                } else {
+
+                    btn.classList.remove('opacity-40', 'cursor-not-allowed');
+
+                }
+
+            });
+
+        }
+
+
+
+        function updateOverlayWildcardBadge(element, used) {
+
+            if (!element) return;
+
+            if (used) {
+
+                element.classList.add('opacity-25', 'line-through', 'border-red-600/50');
+
+                element.classList.remove('border-amber-500/40');
+
+            } else {
+
+                element.classList.remove('opacity-25', 'line-through', 'border-red-600/50');
+
+                element.classList.add('border-amber-500/40');
+
+            }
+
+        }
+
+
+
+        // ACCIONES DE CONTROLADOR
+
+        function sendQuestionToOverlay() {
+
+            gameState.overlayVisible = true;
+
+            gameState.highlightedOption = null;
+
+            gameState.resolvedState = null;
+
+            gameState.timerActive = false;
+
+            gameState.wildcard_ruleta_active = false;
+
+            AudioFX.playBeep(330, 0.4, 'sine');
+
+            saveStateToLocalStorage();
+
+        }
+
+
+
+        function hideQuestionOnOverlay() {
+
+            gameState.overlayVisible = false;
+
+            gameState.timerActive = false;
+
+            gameState.wildcard_ruleta_active = false;
+
+            saveStateToLocalStorage();
+
+        }
+
+
+
+        function prevQuestion() {
+
+            if (gameState.currentIdx > 0) {
+
+                gameState.currentIdx--;
+
+                // Limpiar variables de selección del turno anterior
+
+                gameState.highlightedOption = null;
+
+                gameState.resolvedState = null;
+
+                gameState.eliminatedOptions = [];
+
+                gameState.ruletaFinished = false;
+
+                gameState.ruletaTargetIndex = -1;
+
+                saveStateToLocalStorage();
+
+            }
+
+        }
+
+
+
+        function nextQuestion() {
+
+            if (gameState.currentIdx < gameState.questions.length - 1) {
+
+                gameState.currentIdx++;
+
+                // Limpiar variables de selección del turno anterior
+
+                gameState.highlightedOption = null;
+
+                gameState.resolvedState = null;
+
+                gameState.eliminatedOptions = [];
+
+                gameState.ruletaFinished = false;
+
+                gameState.ruletaTargetIndex = -1;
+
+                saveStateToLocalStorage();
+
+            }
+
+        }
+
+
+
+        function setTensionOption(opt) {
+
+            if (gameState.resolvedState) return;
+
+            gameState.highlightedOption = opt;
+
+            AudioFX.playTension();
+
+            saveStateToLocalStorage();
+
+        }
+
+
+
+        function resolveAnswer(isCorrect) {
+
+            if (!gameState.highlightedOption) return;
+
+            
+
+            const q = gameState.questions[gameState.currentIdx];
+
+            
+
+            if (isCorrect) {
+
+                gameState.resolvedState = "correct";
+
+                gameState.points += q.points;
+
+                
+
+                // DETECTAR LOS HITOS DE PREMIO (PREGUNTAS 5, 10 Y 15)
+
+                if (q.prize) {
+
+                    gameState.prizeActive = true;
+
+                    gameState.activePrizeData = q.prize;
+
+                    AudioFX.playPrizeFanfare();
+
+                    startConfettiShower();
+
+                } else {
+
+                    AudioFX.playSuccess();
+
+                }
+
+            } else {
+
+                gameState.resolvedState = "wrong";
+
+                AudioFX.playError();
+
+            }
+
+            saveStateToLocalStorage();
+
+        }
+
+
+
+        function dismissPrize() {
+
+            gameState.prizeActive = false;
+
+            stopConfettiShower();
+
+            saveStateToLocalStorage();
+
+        }
+
+
+
+        // ACTIVAR TEMPORIZADORES (60 SEGUNDOS)
+
+        function startConcurisilloTimer(type) {
+
+            gameState.timerActive = true;
+
+            gameState.timerType = type;
+
+            gameState.timerSecs = 60;
+
+            saveStateToLocalStorage();
+
+
+
+            if (timerInterval) clearInterval(timerInterval);
+
+            timerInterval = setInterval(() => {
+
+                const curr = JSON.parse(localStorage.getItem('quiznefilo_state'));
+
+                if (curr.timerSecs > 1) {
+
+                    curr.timerSecs--;
+
+                    gameState.timerSecs = curr.timerSecs;
+
+                    localStorage.setItem('quiznefilo_state', JSON.stringify(curr));
+
+                    applyStateToUI();
+
+                } else {
+
+                    clearInterval(timerInterval);
+
+                    curr.timerSecs = 0;
+
+                    curr.timerActive = false;
+
+                    gameState.timerSecs = 0;
+
+                    gameState.timerActive = false;
+
+                    localStorage.setItem('quiznefilo_state', JSON.stringify(curr));
+
+                    applyStateToUI();
+
+                }
+
+            }, 1000);
+
+        }
+
+
+
+        function triggerLlamadaWildcard() {
+
+            if (gameState.wildcard_llamada_used) return;
+
+            gameState.wildcard_llamada_used = true;
+
+            gameState.wildcard_llamada_active = true;
+
+            startConcurisilloTimer("llamada");
+
+        }
+
+
+
+        function triggerChatWildcard() {
+
+            if (gameState.wildcard_chat_used) return;
+
+            gameState.wildcard_chat_used = true;
+
+            gameState.wildcard_chat_active = true;
+
+            startConcurisilloTimer("chat");
+
+        }
+
+
+
+        // ACTIVAR LA RULETA DEL CAOS CON ELIMINACIÓN DE RESPUESTAS (Mecánica Jugable)
+
+        function triggerRuletaWildcard() {
+
+            if (gameState.wildcard_ruleta_used) return;
+
+            gameState.wildcard_ruleta_used = true;
+
+            gameState.wildcard_ruleta_active = true;
+
+            gameState.ruletaFinished = false;
+
+
+
+            // 1. Decidir sector de destino aleatorio
+
+            const winnerIdx = Math.floor(Math.random() * ruletaItems.length);
+
+            const sector = ruletaItems[winnerIdx];
+
+            
+
+            // 2. Calcular los grados exactos para que la flecha superior apunte al sector ganador
+
+            const anglePerSector = 360 / ruletaItems.length;
+
+            const targetSectorAngle = 360 - (winnerIdx * anglePerSector + (anglePerSector / 2));
+
+            const spins = 1800; // 5 vueltas completas de inercia cinematográfica
+
+            gameState.ruletaTargetAngle = spins + targetSectorAngle;
+
+            gameState.ruletaTargetIndex = winnerIdx;
+
+            
+
+            // 3. Calcular qué opciones incorrectas se van a eliminar basándose en el resultado
+
+            const q = gameState.questions[gameState.currentIdx];
+
+            const incorrectOptions = ["A", "B", "C", "D"].filter(opt => opt !== q.correct);
+
+            
+
+            // Desordenar las opciones incorrectas para eliminar de forma aleatoria justa
+
+            const shuffledIncorrect = incorrectOptions.sort(() => Math.random() - 0.5);
+
+            const optionsToEliminate = shuffledIncorrect.slice(0, sector.count);
+
+            gameState.eliminatedOptions = optionsToEliminate;
+
+
+
+            saveStateToLocalStorage();
+
+
+
+            // 4. Reproducir el traqueteo de clicks de la ruleta simulando la desaceleración
+
+            let clickDelay = 50;
+
+            const playSpinClicks = () => {
+
+                if (clickDelay > 450) return;
+
+                AudioFX.playClick();
+
+                clickDelay += 20;
+
+                setTimeout(playSpinClicks, clickDelay);
+
+            };
+
+            playSpinClicks();
+
+
+
+            // 5. Esperar a que la transición CSS de 4.5 segundos termine para desvanecer las opciones incorrectas
+
+            setTimeout(() => {
+
+                const curr = JSON.parse(localStorage.getItem('quiznefilo_state'));
+
+                curr.ruletaFinished = true;
+
+                gameState.ruletaFinished = true;
+
+                
+
+                // Reproducir tono de finalización de ruleta
+
+                if (sector.count > 0) {
+
+                    AudioFX.playSuccess();
+
+                } else {
+
+                    AudioFX.playError(); // ¡El temido 0 opciones eliminadas!
+
+                }
+
+
+
+                localStorage.setItem('quiznefilo_state', JSON.stringify(curr));
+
+                applyStateToUI();
+
+
+
+                // Cerrar automáticamente la ruleta 3,5 segundos después de que se detenga
+
+                setTimeout(() => {
+
+                    const postSpin = JSON.parse(localStorage.getItem('quiznefilo_state'));
+
+                    postSpin.wildcard_ruleta_active = false;
+
+                    gameState.wildcard_ruleta_active = false;
+
+                    localStorage.setItem('quiznefilo_state', JSON.stringify(postSpin));
+
+                    applyStateToUI();
+
+                }, 3500);
+
+
+
+            }, 4500);
+
+        }
+
+
+
+        function saveQuestions() {
+
+            try {
+
+                const jsonText = document.getElementById('ctrl-questions-json').value;
+
+                const parsed = JSON.parse(jsonText);
+
+                if (Array.isArray(parsed)) {
+
+                    gameState.questions = parsed;
+
+                    gameState.currentIdx = 0;
+
+                    gameState.highlightedOption = null;
+
+                    gameState.resolvedState = null;
+
+                    gameState.prizeActive = false;
+
+                    gameState.eliminatedOptions = [];
+
+                    gameState.ruletaFinished = false;
+
+                    gameState.ruletaTargetIndex = -1;
+
+                    saveStateToLocalStorage();
+
+                    alert("¡Preguntas guardadas con éxito en el sistema local!");
+
+                } else {
+
+                    alert("Error: El JSON debe ser un array de preguntas.");
+
+                }
+
+            } catch (err) {
+
+                alert("Error de sintaxis en el JSON de preguntas:\n" + err.message);
+
+            }
+
+        }
+
+
+
+        function resetGame() {
+
+            gameState = {
+
+                currentIdx: 0,
+
+                questions: [...defaultQuestions],
+
+                overlayVisible: false,
+
+                highlightedOption: null,
+
+                resolvedState: null,
+
+                wildcard_llamada_used: false,
+
+                wildcard_chat_used: false,
+
+                wildcard_ruleta_used: false,
+
+                wildcard_llamada_active: false,
+
+                wildcard_chat_active: false,
+
+                wildcard_ruleta_active: false,
+
+                eliminatedOptions: [],
+
+                points: 0,
+
+                ruletaTargetAngle: 0,
+
+                ruletaTargetIndex: -1,
+
+                ruletaFinished: false,
+
+                timerSecs: 60,
+
+                timerType: "chat",
+
+                timerActive: false,
+
+                prizeActive: false,
+
+                activePrizeData: null
+
+            };
+
+            if (timerInterval) clearInterval(timerInterval);
+
+            stopConfettiShower();
+
+            saveStateToLocalStorage();
+
+        }
+
     </script>
+
 </body>
-</html>
+
+</html> 
+
