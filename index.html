@@ -13,7 +13,7 @@
             margin: 0;
             padding: 0;
             overflow: hidden;
-            background-color: #transparent;
+            background-color: transparent;
         }
         .text-cinema {
             font-family: 'Cinzel', serif;
@@ -82,7 +82,7 @@
         /* Animación de "Te has cagado" */
         #ov-cagado-container {
             z-index: 100;
-            background-color: rgba(0, 0, 0, 0.65);
+            background-color: rgba(0, 0, 0, 0.75);
         }
         .cagado-content {
             text-align: center;
@@ -134,7 +134,7 @@
     </div>
 
     <div id="overlay-view" class="hidden absolute inset-0 w-[1920px] h-[1080px] pointer-events-none overflow-hidden">
-            
+        
         <div id="ov-cagado-container" class="absolute inset-0 flex items-center justify-center pointer-events-none hidden">
             <div class="px-16 py-12 bg-slate-950/98 rounded-3xl flex flex-col items-center text-center space-y-4 border-4 border-amber-700 neon-border shadow-2xl cagado-content">
                 <span class="text-9xl">💩</span>
@@ -142,6 +142,7 @@
                 <p class="text-2xl text-white font-bold italic">¡En El Quiznéfilo no te plantas, TE CAGAS!</p>
             </div>
         </div>
+
         <div class="absolute top-10 left-12 flex items-center space-x-4">
             <div class="px-6 py-2 bg-slate-950/80 backdrop-blur-md rounded-xl border border-amber-500/40 neon-border flex items-center space-x-3">
                 <div class="w-3 h-3 bg-red-600 rounded-full animate-pulse"></div>
@@ -259,18 +260,20 @@
             
             <div class="lg:col-span-8 space-y-6">
 
-                <div class="bg-slate-900 border border-slate-800 rounded-2xl p-6">
-                    <span class="text-xs font-bold text-purple-400 uppercase tracking-widest block mb-4">Mecánica Especial Presentador</span>
-                    <button onclick="acceptSoborno()" class="w-full py-4 bg-purple-600 hover:bg-purple-500 text-white font-black rounded-xl uppercase transition-all shadow-lg shadow-purple-900/50">
-                        💸 ACEPTAR SOBORNO (Restaurar Comodines)
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <div class="bg-slate-900 border border-slate-800 rounded-2xl p-6">
+                        <span class="text-xs font-bold text-purple-400 uppercase tracking-widest block mb-4">Mecánica Especial Presentador</span>
+                        <button onclick="acceptSoborno()" class="w-full py-4 bg-purple-600 hover:bg-purple-500 text-white font-black rounded-xl uppercase transition-all shadow-lg shadow-purple-900/50">
+                            💸 ACEPTAR SOBORNO (Restaurar)
+                        </button>
+                    </div>
 
-                        <div class="bg-slate-900 border border-slate-800 rounded-2xl p-6">
-                    <span class="text-xs font-bold text-amber-700 uppercase tracking-widest block mb-4">Final de la Partida</span>
-                    <button onclick="triggerCagado()" class="w-full py-4 bg-amber-800 hover:bg-amber-700 text-white font-black rounded-xl uppercase transition-all shadow-lg shadow-amber-900/40 tracking-wider">
-                        💩 ¡EL CONCURSANTE SE HA CAGADO!
-                    </button>
-                </div>
-                    </button>
+                    <div class="bg-slate-900 border border-slate-800 rounded-2xl p-6">
+                        <span class="text-xs font-bold text-amber-700 uppercase tracking-widest block mb-4">Final de la Partida</span>
+                        <button onclick="triggerCagado()" class="w-full py-4 bg-amber-800 hover:bg-amber-700 text-white font-black rounded-xl uppercase transition-all shadow-lg shadow-amber-900/40 tracking-wider">
+                            💩 ¡EL CONCURSANTE SE HA CAGADO!
+                        </button>
+                    </div>
                 </div>
                 
                 <div class="bg-slate-900 border border-slate-800 rounded-2xl p-6">
@@ -544,7 +547,7 @@
             {
                 level: "Nivel 15 (Difícil) - ⭐ Hito Final ⭐",
                 points: 1000000,
-                question: "En 'Reservoir Dogs' (1992), durante la famosa y brutal escena de la tortura al policía al ritmo de 'Stuck in the Middle with You', ¿cuál es el color asignado al sádico personaje interpretado por Michael Madsen?",
+                question: "En 'Reservoir Dogs' (1992), during la famosa y brutal escena de la tortura al policía al ritmo de 'Stuck in the Middle with You', ¿cuál es el color asignado al sádico personaje interpretado por Michael Madsen?",
                 options: ["A: Señor Rubio", "B: Señor Rosa", "C: Señor Blanco", "D: Señor Azul"],
                 correct: "A",
                 prize: {
@@ -642,11 +645,8 @@
             timerType: "chat",
             timerActive: false,
             prizeActive: false,
-            activePrizeData: null
-            timerActive: false,
-        prizeActive: false,
-        activePrizeData: null,
-        playerCagadoActive: false
+            activePrizeData: null,
+            playerCagadoActive: false
         };
 
         let currentRole = "";
@@ -685,7 +685,7 @@
                 currentRole = "overlay";
                 document.getElementById('setup-screen').classList.add('hidden');
                 document.getElementById('overlay-view').classList.remove('hidden');
-                document.body.style.backgroundColor = "#transparent";
+                document.body.style.backgroundColor = "transparent";
                 buildTimelineNodes(); buildRuletaSVG(); applyStateToUI();
             } else if (hash === '#control') {
                 currentRole = "control";
@@ -765,7 +765,6 @@
             }
         }
 
-        // FUNCIÓN DE SOBORNO CORREGIDA
         function acceptSoborno() {
             gameState.wildcard_llamada_used = false;
             gameState.wildcard_chat_used = false;
@@ -781,6 +780,23 @@
                 desc: "¡El concursante ha apoquinado! Todos los comodines vuelven a estar disponibles."
             };
             AudioFX.playPrizeFanfare(); saveStateToLocalStorage();
+        }
+
+        function triggerCagado() {
+            if (gameState.playerCagadoActive) return;
+            
+            gameState.playerCagadoActive = true;
+            AudioFX.playError();
+            saveStateToLocalStorage();
+
+            // Desaparece automáticamente a los 4 segundos
+            setTimeout(() => {
+                const curr = JSON.parse(localStorage.getItem('quiznefilo_state'));
+                curr.playerCagadoActive = false;
+                gameState.playerCagadoActive = false;
+                localStorage.setItem('quiznefilo_state', JSON.stringify(curr));
+                applyStateToUI();
+            }, 4000);
         }
 
         function startConfettiShower() {
@@ -805,6 +821,9 @@
             });
         }
 
+        /******************************************************************
+         * RE-RENDERIZADO PRINCIPAL DE LA UI
+         ******************************************************************/
         function applyStateToUI() {
             const jsonTextarea = document.getElementById('ctrl-questions-json');
             if (jsonTextarea && document.activeElement !== jsonTextarea) jsonTextarea.value = JSON.stringify(gameState.questions, null, 2);
@@ -898,8 +917,13 @@
                 const pContainer = vp.querySelector('#ov-prize-container');
                 if (gameState.prizeActive && gameState.activePrizeData) {
                     pContainer.classList.remove('hidden'); vp.querySelector('#ov-prize-emoji').textContent = gameState.activePrizeData.emoji;
-                    vp.querySelector('#ov-prize-title').textContent = gameState.activePrizeData.title; vp.querySelector('#ov-prize-desc').textContent = gameState.activePrizeData.desc;
+                    pContainer.querySelector('#ov-prize-title').textContent = gameState.activePrizeData.title; vp.querySelector('#ov-prize-desc').textContent = gameState.activePrizeData.desc;
                 } else pContainer.classList.add('hidden');
+
+                // Sincronizar Overlay de Te has cagado
+                const cagadoContainer = vp.querySelector('#ov-cagado-container');
+                if (gameState.playerCagadoActive) cagadoContainer.classList.remove('hidden');
+                else cagadoContainer.classList.add('hidden');
             });
         }
 
@@ -926,6 +950,7 @@
         function prevQuestion() { if (gameState.currentIdx > 0) { gameState.currentIdx--; gameState.highlightedOption = null; gameState.resolvedState = null; gameState.eliminatedOptions = []; gameState.ruletaFinished = false; gameState.ruletaTargetIndex = -1; saveStateToLocalStorage(); } }
         function nextQuestion() { if (gameState.currentIdx < gameState.questions.length - 1) { gameState.currentIdx++; gameState.highlightedOption = null; gameState.resolvedState = null; gameState.eliminatedOptions = []; gameState.ruletaFinished = false; gameState.ruletaTargetIndex = -1; saveStateToLocalStorage(); } }
 
+        /* ... Funciones de Respuestas y Tensión ... */
         function setTensionOption(opt) { if (gameState.resolvedState) return; gameState.highlightedOption = opt; AudioFX.playTension(); saveStateToLocalStorage(); }
 
         function resolveAnswer(isCorrect) {
@@ -959,7 +984,6 @@
         function triggerLlamadaWildcard() { if (gameState.wildcard_llamada_used) return; gameState.wildcard_llamada_used = true; gameState.wildcard_llamada_active = true; startConcurisilloTimer("llamada"); }
         function triggerChatWildcard() { if (gameState.wildcard_chat_used) return; gameState.wildcard_chat_used = true; gameState.wildcard_chat_active = true; startConcurisilloTimer("chat"); }
 
-        // ANIMACIÓN CORREGIDA CON TIMEOUTS PARA LA RULETA
         function triggerRuletaWildcard() {
             if (gameState.wildcard_ruleta_used) return;
             gameState.wildcard_ruleta_used = true;
@@ -1024,18 +1048,18 @@
             } catch (err) { alert("Error de sintaxis en el JSON:\n" + err.message); }
         }
 
-      function resetGame() {
-        if (timerInterval) clearInterval(timerInterval); stopConfettiShower();
-        gameState = {
-            currentIdx: 0, questions: [...defaultQuestions], overlayVisible: false, highlightedOption: null, resolvedState: null,
-            wildcard_llamada_used: false, wildcard_chat_used: false, wildcard_ruleta_used: false,
-            wildcard_llamada_active: false, wildcard_chat_active: false, wildcard_ruleta_active: false,
-            eliminatedOptions: [], points: 0, ruletaTargetAngle: 0, ruletaTargetIndex: -1, ruletaFinished: false,
-            timerSecs: 60, timerType: "chat", timerActive: false, prizeActive: false, activePrizeData: null,
-            playerCagadoActive: false // <-- AÑADE ESTO AQUÍ TAMBIÉN
-        };
-        saveStateToLocalStorage();
-    }
+        function resetGame() {
+            if (timerInterval) clearInterval(timerInterval); stopConfettiShower();
+            gameState = {
+                currentIdx: 0, questions: [...defaultQuestions], overlayVisible: false, highlightedOption: null, resolvedState: null,
+                wildcard_llamada_used: false, wildcard_chat_used: false, wildcard_ruleta_used: false,
+                wildcard_llamada_active: false, wildcard_chat_active: false, wildcard_ruleta_active: false,
+                eliminatedOptions: [], points: 0, ruletaTargetAngle: 0, ruletaTargetIndex: -1, ruletaFinished: false,
+                timerSecs: 60, timerType: "chat", timerActive: false, prizeActive: false, activePrizeData: null,
+                playerCagadoActive: false
+            };
+            saveStateToLocalStorage();
+        }
     </script>
 </body>
 
