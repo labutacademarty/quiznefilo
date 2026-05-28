@@ -13,7 +13,7 @@
             margin: 0;
             padding: 0;
             overflow: hidden;
-            background-color: #000000;
+            background-color: #transparent;
         }
         .text-cinema {
             font-family: 'Cinzel', serif;
@@ -654,7 +654,7 @@
                 currentRole = "overlay";
                 document.getElementById('setup-screen').classList.add('hidden');
                 document.getElementById('overlay-view').classList.remove('hidden');
-                document.body.style.backgroundColor = "#000000";
+                document.body.style.backgroundColor = "#transparent";
                 buildTimelineNodes(); buildRuletaSVG(); applyStateToUI();
             } else if (hash === '#control') {
                 currentRole = "control";
