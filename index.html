@@ -437,126 +437,201 @@
     </div>
 
     <script>
-        // PREGUNTAS POR DEFECTO DEL CONCURSO
+        // NUEVA LISTA DE PREGUNTAS ACTUALIZADA
         const defaultQuestions = [
             {
-                level: "Nivel 1 (Fácil)",
-                points: 100,
-                question: "¿Qué famoso cineasta dirigió la icónica película de terror veraniego 'Tiburón' en 1975?",
-                options: ["A: James Cameron", "B: Steven Spielberg", "C: John Carpenter", "D: Alfred Hitchcock"],
-                correct: "B"
+                "level": "Nivel 1 (Fácil)",
+                "points": 100,
+                "question": "¿Qué famoso cineasta dirigió la icónica película de terror veraniego 'Tiburón' en 1975?",
+                "options": [
+                    "A: James Cameron",
+                    "B: Steven Spielberg",
+                    "C: John Carpenter",
+                    "D: Patricio Estrella"
+                ],
+                "correct": "B"
             },
             {
-                level: "Nivel 2 (Fácil)",
-                points: 200,
-                question: "¿Qué director firmó la aclamada obra de culto de ciencia ficción y samuráis modernos 'Kill Bill'?",
-                options: ["A: Martin Scorsese", "B: David Fincher", "C: Quentin Tarantino", "D: Christopher Nolan"],
-                correct: "C"
+                "level": "Nivel 2 (Fácil)",
+                "points": 200,
+                "question": "¿Qué director firmó la aclamada obra de culto de ciencia ficción y samuráis modernos 'Kill Bill'?",
+                "options": [
+                    "A: Martin Scorsese",
+                    "B: El Dandy de Barcelona",
+                    "C: Quentin Tarantino",
+                    "D: Christopher Nolan"
+                ],
+                "correct": "C"
             },
             {
-                level: "Nivel 3 (Fácil)",
-                points: 300,
-                question: "En la mítica película de los 90 'El club de la lucha', ¿quién es el carismático fabricante de jabones interpretado por Brad Pitt?",
-                options: ["A: Tyler Durden", "B: Patrick Bateman", "C: Vincent Vega", "D: John Doe"],
-                correct: "A"
+                "level": "Nivel 3 (Fácil)",
+                "points": 300,
+                "question": "¿En qué mítica película de los 90 los personajes Tyler Durden y el Narrador fundan un club clandestino de peleas?",
+                "options": [
+                    "A: Seven",
+                    "B: El club de la lucha",
+                    "C: Los Vergadores",
+                    "D: Pulp Fiction"
+                ],
+                "correct": "B"
             },
             {
-                level: "Nivel 4 (Fácil)",
-                points: 500,
-                question: "¿Qué director de culto es conocido por su obsesiva simetría visual y películas como 'El Gran Hotel Budapest'?",
-                options: ["A: Stanley Kubrick", "B: Tim Burton", "C: Wes Anderson", "D: Denis Villeneuve"],
-                correct: "C"
+                "level": "Nivel 4 (Fácil)",
+                "points": 500,
+                "question": "¿Qué director de culto es conocido por su obsesiva simetría visual y películas como 'El Gran Hotel Budapest'?",
+                "options": [
+                    "A: Stanley Kubrick",
+                    "B: Tim Burton",
+                    "C: Wes Anderson",
+                    "D: Jordi el niño polla"
+                ],
+                "correct": "C"
             },
             {
-                level: "Nivel 5 (Fácil) - ⭐ Hito 1 ⭐",
-                points: 1000,
-                question: "En 'Toy Story' de Pixar, ¿cuál es el eslogan espacial que repite con orgullo la figura de acción Buzz Lightyear?",
-                options: ["A: ¡Al infinito y más allá!", "B: ¡Yo soy tu amigo fiel!", "C: ¡Hacia el espacio exterior!", "D: ¡Por el honor de la galaxia!"],
-                correct: "A",
-                prize: {
-                    emoji: "🍿",
-                    title: "¡PAQUETE DE PALOMITAS!",
-                    desc: "¡Hito superado! Te acabas de ganar un fantástico paquete de palomitas para disfrutar a tope del directo."
+                "level": "Nivel 5 (Fácil) - ⭐ Hito 1 ⭐",
+                "points": 1000,
+                "question": "¿Cuál es el nombre del leal vaquero de juguete protagonista en la franquicia 'Toy Story' de Pixar?",
+                "options": [
+                    "A: Woody",
+                    "B: Buzz Lightyear",
+                    "C: Slinky",
+                    "D: Plug anal"
+                ],
+                "correct": "A",
+                "prize": {
+                    "emoji": "🍿",
+                    "title": "¡PAQUETE DE PALOMITAS!",
+                    "desc": "¡Hito superado! Te acabas de ganar un fantástico paquete de palomitas para disfrutar a tope del directo."
                 }
             },
             {
-                level: "Nivel 6 (Intermedio)",
-                points: 2000,
-                question: "En la obra maestra del terror de John Carpenter, 'La Cosa' (1982), ¿cuál es la profesión del icónico personaje MacReady (Kurt Russell)?",
-                options: ["A: Biólogo molecular", "B: Piloto de helicóptero", "C: Mecánico jefe", "D: Médico de la base"],
-                correct: "B"
+                "level": "Nivel 6 (Intermedio)",
+                "points": 2000,
+                "question": "En la obra maestra de John Carpenter 'La Cosa' (1982), ¿cuál es el primer animal que la criatura asimila en la base Antártica desatando las sospechas?",
+                "options": [
+                    "A: Un pingüino",
+                    "B: Un perro Husky",
+                    "C: Un ratón de laboratorio",
+                    "D: Un zorro ártico"
+                ],
+                "correct": "B"
             },
             {
-                level: "Nivel 7 (Intermedio)",
-                points: 4000,
-                question: "En 'Pulp Fiction', ¿qué tiene grabado exactamente en la billetera el personaje de Samuel L. Jackson (Jules Winnfield)?",
-                options: ["A: Bad Mother Fucker", "B: Ezekiel 25:17", "C: Property of Marsellus", "D: Red Apple"],
-                correct: "A"
+                "level": "Nivel 7 (Intermedio)",
+                "points": 4000,
+                "question": "En 'Pulp Fiction', Vincent Vega (John Travolta) está indignado porque alguien le ha destrozado el coche. ¿Qué modelo de coche clásico conduce en la película?",
+                "options": [
+                    "A: Chevrolet Chevelle Malibu de 1964",
+                    "B: Ford Mustang Fastback de 1967",
+                    "C: Dodge Challenger de 1970",
+                    "D: Un Seat Panda tuneado"
+                ],
+                "correct": "A"
             },
             {
-                level: "Nivel 8 (Intermedio)",
-                points: 8000,
-                question: "¿Qué banda sonora firmó el grupo de música electrónica Daft Punk para la factoría Disney en 2010?",
-                options: ["A: Tron: Legacy", "B: Blade Runner 2049", "C: Interstellar", "D: Matrix Reloaded"],
-                correct: "A"
+                "level": "Nivel 8 (Intermedio)",
+                "points": 8000,
+                "question": "Para componer la banda sonora de 'Tron: Legacy' en 2010, Daft Punk instaló un estudio de grabación especial en un hotel de Hollywood utilizando un sintetizador modular legendario. ¿Cuál fue?",
+                "options": [
+                    "A: Moog Modular",
+                    "B: Korg MS-20",
+                    "C: Roland Juno-106",
+                    "D: El radiocasete de mi abuelo"
+                ],
+                "correct": "A"
             },
             {
-                level: "Nivel 9 (Intermedio)",
-                points: 16000,
-                question: "¿Cuál fue el largometraje de debut en la dirección de Quentin Tarantino estrenado en el año 1992?",
-                options: ["A: True Romance", "B: Natural Born Killers", "C: Reservoir Dogs", "D: Jackie Brown"],
-                correct: "C"
+                "level": "Nivel 9 (Intermedio)",
+                "points": 16000,
+                "question": "Aunque 'Reservoir Dogs' (1992) es su debut oficial en cines, Tarantino coescribió y dirigió un mediometraje amateur en los 80 que se quemó parcialmente en el laboratorio. ¿Cómo se llamaba?",
+                "options": [
+                    "A: My Best Friend's Birthday",
+                    "B: Love Birds en el videoclub",
+                    "C: Natural Born Killers: Act I",
+                    "D: El sótano de Quentin"
+                ],
+                "correct": "A"
             },
             {
-                level: "Nivel 10 (Intermedio) - ⭐ Hito 2 ⭐",
-                points: 32000,
-                question: "En 'El Gran Hotel Budapest' de Wes Anderson, ¿como se llama el codiciado cuadro renacentista que desata toda la trama?",
-                options: ["A: El niño con manzana", "B: La joven de la perla", "C: El lobo herido", "D: Retrato de Madame D"],
-                correct: "A",
-                prize: {
-                    emoji: "🖼️",
-                    title: "¡PÓSTER DE ALIEXPRESS!",
-                    desc: "¡Espectacular! Te llevas un póster impreso de tu peli favorita directamente importado con amor desde AliExpress."
+                "level": "Nivel 10 (Intermedio) - ⭐ Hito 2 ⭐",
+                "points": 32000,
+                "question": "En 'El Gran Hotel Budapest', el cuadro 'El niño con manzana' es atribuido a un pintor ficticio cuyo estilo imita a los maestros del Renacimiento septentrional. ¿Cómo se llama este autor ficticio?",
+                "options": [
+                    "A: Johannes Van Hoytl",
+                    "B: Retrato de Madame D",
+                    "C: Gustave Klimt",
+                    "D: Un becario de AliExpress"
+                ],
+                "correct": "A",
+                "prize": {
+                    "emoji": "🖼️",
+                    "title": "¡PÓSTER DE ALIEXPRESS!",
+                    "desc": "¡Espectacular! Te llevas un póster impreso de tu peli favorita directamente importado con amor desde AliExpress."
                 }
             },
             {
-                level: "Nivel 11 (Difícil)",
-                points: 64000,
-                question: "En la retorcida película de culto 'Mandy' (2018), protagonizada por Nicolas Cage, ¿cómo se llama la secta técnico-religiosa que desencadena la venganza?",
-                options: ["A: Los Hijos del Nuevo Amanecer", "B: El Templo de la Conciencia", "C: Los Heraldos de la Sangre", "D: El Camino del Purgatorio"],
-                correct: "A"
+                "level": "Nivel 11 (Difícil)",
+                "points": 64000,
+                "question": "En la psicodélica película de culto 'Mandy' (2018), el líder de la secta, Jeremiah Sand, es un músico frustrado. ¿Qué instrumento toca obsesivamente y protagoniza su delirio de grandeza en un vinilo?",
+                "options": [
+                    "A: El órgano folk y la guitarra acústica",
+                    "B: El sintetizador analógico",
+                    "C: El bajo eléctrico distorsionado",
+                    "D: La flauta travesera"
+                ],
+                "correct": "A"
             },
             {
-                level: "Nivel 12 (Difícil)",
-                points: 125000,
-                question: "En el clásico de culto 'La naranja mecánica' (1971), ¿cómo se llama la sustancia láctea adulterada con drogas que Alex y sus drogos toman en el bar Korova?",
-                options: ["A: Moloko Plus", "B: Vellocet Milk", "C: Synthemesc Drop", "D: Drencrom Shake"],
-                correct: "A"
+                "level": "Nivel 12 (Difícil)",
+                "points": 125000,
+                "question": "En 'La naranja mecánica' (1971), Stanley Kubrick ocultó un sutil huevo de pascua en la escena de la tienda de discos donde Alex habla con dos chicas. ¿Qué disco de su propia filmografía se ve en el mostrador?",
+                "options": [
+                    "A: La banda sonora de '2001: Una odisea del espacio'",
+                    "B: Un póster de 'Lolita'",
+                    "C: El vinilo de 'Teléfono rojo? Volamos hacia Moscú'",
+                    "D: Un single de los Beach Boys"
+                ],
+                "correct": "A"
             },
             {
-                level: "Nivel 13 (Difícil)",
-                points: 250000,
-                question: "John Carpenter no solo dirige, sino que compone sus bandas sonoras. ¿Qué instrumento musical electrónico analógico utilizó principalmente para el mítico tema de 'Halloween'?",
-                options: ["A: Moog Modular", "B: Prophet-5", "C: Minimoog", "D: Korg MS-20"],
-                correct: "A"
+                "level": "Nivel 13 (Difícil)",
+                "points": 250000,
+                "question": "El mítico e inquietante compás de la banda sonora de 'Halloween' (1978) compuesta por John Carpenter es famoso por su ritmo asimétrico e inusual. ¿En qué compás musical está escrito?",
+                "options": [
+                    "A: Compás de 5/4",
+                    "B: Compás de 7/8",
+                    "C: Compás de 3/4",
+                    "D: Compás de 11/4"
+                ],
+                "correct": "A"
             },
             {
-                level: "Nivel 14 (Difícil)",
-                points: 500000,
-                question: "En la aclamada película de body horror 'The Substance' (2024), ¿cuál es el número exacto de la norma crucial que recuerda constantemente que 'ambos cuerpos son uno solo'?",
-                options: ["A: Norma Número 3", "B: Norma Número 1", "C: Instrucción Especial 5", "D: Regla Básica 7"],
-                correct: "B"
+                "level": "Nivel 14 (Difícil)",
+                "points": 500000,
+                "question": "En la retorcida película de body horror 'The Substance' (2024), ¿cuántos días exactos dura el ciclo estricto de estabilización que cada cuerpo debe cumplir antes de alternarse sin excepción?",
+                "options": [
+                    "A: 7 días",
+                    "B: 10 días",
+                    "C: 14 días",
+                    "D: 3 días"
+                ],
+                "correct": "A"
             },
             {
-                level: "Nivel 15 (Difícil) - ⭐ Hito Final ⭐",
-                points: 1000000,
-                question: "En 'Reservoir Dogs' (1992), durante la famosa y brutal escena de la tortura al policía al ritmo de 'Stuck in the Middle with You', ¿cuál es el color asignado al sádico personaje interpretado por Michael Madsen?",
-                options: ["A: Señor Rubio", "B: Señor Rosa", "C: Señor Blanco", "D: Señor Azul"],
-                correct: "A",
-                prize: {
-                    emoji: "🎓🎟️",
-                    title: "¡DIPLOMA CINÉFILO + ENTRADA!",
-                    desc: "¡ERES LEYENDA! Te llevas tu codiciado Diploma de Cinéfilo de Élite de Marty y Doc, más una entrada gratis al cine."
+                "level": "Nivel 15 (Difícil) - ⭐ Hito Final ⭐",
+                "points": 1000000,
+                "question": "En 'Reservoir Dogs' (1992), el atraco a la joyería sale mal por culpa de un personaje que no vemos en pantalla, pero que el Señor Blanco (Harvey Keitel) menciona cabreado como el detonante del tiroteo. ¿Quién es?",
+                "options": [
+                    "A: El Señor Marrón al entrar en pánico",
+                    "B: El gerente de la joyería que activó la alarma oculta",
+                    "C: El Señor Gris, que custodiaba la puerta trasera",
+                    "D: Una mujer policía infiltrada entre los rehenes"
+                ],
+                "correct": "B",
+                "prize": {
+                    "emoji": "🎓🎟️",
+                    "title": "¡DIPLOMA CINÉFILO + ENTRADA!",
+                    "desc": "¡ERES LEYENDA! Te llevas tu codiciado Diploma de Cinéfilo de Élite de Marty y Doc, más una entrada gratis al cine de tu zona."
                 }
             }
         ];
@@ -650,7 +725,7 @@
             prizeActive: false,
             activePrizeData: null,
             playerCagadoActive: false,
-            visibleOptionsCount: 0 // Variable nueva añadida
+            visibleOptionsCount: 0
         };
 
         let currentRole = "";
@@ -824,14 +899,13 @@
             });
         }
 
-        // LÓGICA DE LANZAR Y DESVELAR SECUENCIAL
         function sendQuestionToOverlay() { 
             gameState.overlayVisible = true; 
             gameState.highlightedOption = null; 
             gameState.resolvedState = null; 
             gameState.timerActive = false; 
             gameState.wildcard_ruleta_active = false; 
-            gameState.visibleOptionsCount = 0; // Al lanzar la pregunta, 0 opciones visibles
+            gameState.visibleOptionsCount = 0; 
             AudioFX.playBeep(330, 0.4, 'sine'); 
             saveStateToLocalStorage(); 
         }
@@ -857,6 +931,9 @@
 
         function setTensionOption(opt) { if (gameState.resolvedState) return; gameState.highlightedOption = opt; AudioFX.playTension(); saveStateToLocalStorage(); }
 
+        /******************************************************************
+         * RESOLVER ACERTADAS / FALLADAS
+         ******************************************************************/
         function resolveAnswer(isCorrect) {
             if (!gameState.highlightedOption) return; const q = gameState.questions[gameState.currentIdx];
             if (isCorrect) {
@@ -893,7 +970,6 @@
             gameState.wildcard_ruleta_used = true;
             gameState.wildcard_ruleta_active = true;
             gameState.ruletaFinished = false;
-            // Si tiran ruleta de eliminar, forzamos que se muestren todas las opciones en OBS
             gameState.visibleOptionsCount = 4;
             saveStateToLocalStorage();
 
@@ -988,7 +1064,6 @@
                 });
             });
 
-            // Deshabilitar botón de desvelar si ya están las 4 fuera
             document.querySelectorAll('#ctrl-btn-reveal-next').forEach(btn => {
                 btn.disabled = gameState.visibleOptionsCount >= 4;
                 if (gameState.visibleOptionsCount >= 4) btn.classList.add('opacity-40', 'cursor-not-allowed');
@@ -1025,13 +1100,11 @@
                 vp.querySelector('#ov-question-text').textContent = q.question;
                 vp.querySelector('#ov-points-display').textContent = `${gameState.points} pts`;
 
-                // Control de visibilidad secuencial de las cajas en OBS
                 const optMapping = ["A", "B", "C", "D"];
                 optMapping.forEach((opt, idx) => {
                     const boxEl = vp.querySelector(`#ov-opt-${opt}`); 
                     vp.querySelector(`#ov-opt-text-${opt}`).textContent = q.options[idx] || "";
                     
-                    // Si el índice de la opción es menor que las permitidas por el contador, se muestra. Si no, hidden.
                     if (idx < gameState.visibleOptionsCount) {
                         boxEl.classList.remove('hidden');
                         boxEl.className = "relative overflow-hidden px-8 py-4 bg-slate-950/95 border border-slate-800 rounded-xl flex items-center transition-all duration-300";
@@ -1083,7 +1156,6 @@
                     pContainer.querySelector('#ov-prize-title').textContent = gameState.activePrizeData.title; vp.querySelector('#ov-prize-desc').textContent = gameState.activePrizeData.desc;
                 } else pContainer.classList.add('hidden');
 
-                // Sincronizar Overlay de Te has cagado
                 const cagadoContainer = vp.querySelector('#ov-cagado-container');
                 if (gameState.playerCagadoActive) cagadoContainer.classList.remove('hidden');
                 else cagadoContainer.classList.add('hidden');
