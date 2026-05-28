@@ -79,6 +79,19 @@
             pointer-events: none;
             z-index: 40;
         }
+        /* Animación de "Te has cagado" */
+        #ov-cagado-container {
+            z-index: 100;
+            background-color: rgba(0, 0, 0, 0.65);
+        }
+        .cagado-content {
+            text-align: center;
+            animation: shakeAndPop 0.4s ease-out infinite alternate;
+        }
+        @keyframes shakeAndPop {
+            0% { transform: scale(0.95) rotate(-3deg); }
+            100% { transform: scale(1.1) rotate(3deg); }
+        }
     </style>
 </head>
 
@@ -121,7 +134,14 @@
     </div>
 
     <div id="overlay-view" class="hidden absolute inset-0 w-[1920px] h-[1080px] pointer-events-none overflow-hidden">
-        
+            
+        <div id="ov-cagado-container" class="absolute inset-0 flex items-center justify-center pointer-events-none hidden">
+            <div class="px-16 py-12 bg-slate-950/98 rounded-3xl flex flex-col items-center text-center space-y-4 border-4 border-amber-700 neon-border shadow-2xl cagado-content">
+                <span class="text-9xl">💩</span>
+                <h1 class="text-cinema text-7xl font-black text-amber-500 neon-text tracking-wider">¡TE HAS CAGADO!</h1>
+                <p class="text-2xl text-white font-bold italic">¡En El Quiznéfilo no te plantas, TE CAGAS!</p>
+            </div>
+        </div>
         <div class="absolute top-10 left-12 flex items-center space-x-4">
             <div class="px-6 py-2 bg-slate-950/80 backdrop-blur-md rounded-xl border border-amber-500/40 neon-border flex items-center space-x-3">
                 <div class="w-3 h-3 bg-red-600 rounded-full animate-pulse"></div>
@@ -243,6 +263,13 @@
                     <span class="text-xs font-bold text-purple-400 uppercase tracking-widest block mb-4">Mecánica Especial Presentador</span>
                     <button onclick="acceptSoborno()" class="w-full py-4 bg-purple-600 hover:bg-purple-500 text-white font-black rounded-xl uppercase transition-all shadow-lg shadow-purple-900/50">
                         💸 ACEPTAR SOBORNO (Restaurar Comodines)
+
+                        <div class="bg-slate-900 border border-slate-800 rounded-2xl p-6">
+                    <span class="text-xs font-bold text-amber-700 uppercase tracking-widest block mb-4">Final de la Partida</span>
+                    <button onclick="triggerCagado()" class="w-full py-4 bg-amber-800 hover:bg-amber-700 text-white font-black rounded-xl uppercase transition-all shadow-lg shadow-amber-900/40 tracking-wider">
+                        💩 ¡EL CONCURSANTE SE HA CAGADO!
+                    </button>
+                </div>
                     </button>
                 </div>
                 
@@ -616,6 +643,10 @@
             timerActive: false,
             prizeActive: false,
             activePrizeData: null
+            timerActive: false,
+        prizeActive: false,
+        activePrizeData: null,
+        playerCagadoActive: false
         };
 
         let currentRole = "";
@@ -993,17 +1024,18 @@
             } catch (err) { alert("Error de sintaxis en el JSON:\n" + err.message); }
         }
 
-        function resetGame() {
-            if (timerInterval) clearInterval(timerInterval); stopConfettiShower();
-            gameState = {
-                currentIdx: 0, questions: [...defaultQuestions], overlayVisible: false, highlightedOption: null, resolvedState: null,
-                wildcard_llamada_used: false, wildcard_chat_used: false, wildcard_ruleta_used: false,
-                wildcard_llamada_active: false, wildcard_chat_active: false, wildcard_ruleta_active: false,
-                eliminatedOptions: [], points: 0, ruletaTargetAngle: 0, ruletaTargetIndex: -1, ruletaFinished: false,
-                timerSecs: 60, timerType: "chat", timerActive: false, prizeActive: false, activePrizeData: null
-            };
-            saveStateToLocalStorage();
-        }
+      function resetGame() {
+        if (timerInterval) clearInterval(timerInterval); stopConfettiShower();
+        gameState = {
+            currentIdx: 0, questions: [...defaultQuestions], overlayVisible: false, highlightedOption: null, resolvedState: null,
+            wildcard_llamada_used: false, wildcard_chat_used: false, wildcard_ruleta_used: false,
+            wildcard_llamada_active: false, wildcard_chat_active: false, wildcard_ruleta_active: false,
+            eliminatedOptions: [], points: 0, ruletaTargetAngle: 0, ruletaTargetIndex: -1, ruletaFinished: false,
+            timerSecs: 60, timerType: "chat", timerActive: false, prizeActive: false, activePrizeData: null,
+            playerCagadoActive: false // <-- AÑADE ESTO AQUÍ TAMBIÉN
+        };
+        saveStateToLocalStorage();
+    }
     </script>
 </body>
 
