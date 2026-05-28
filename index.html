@@ -310,11 +310,14 @@
                         </div>
                     </div>
 
-                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-                        <button onclick="sendQuestionToOverlay()" class="w-full py-3 bg-amber-500 hover:bg-amber-600 text-slate-950 font-black rounded-xl tracking-wider uppercase transition-all shadow-lg shadow-amber-500/10">
-                            🚀 Mostrar Pregunta en OBS
+                    <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+                        <button onclick="sendQuestionToOverlay()" class="w-full py-3 bg-amber-500 hover:bg-amber-600 text-slate-950 font-black rounded-xl tracking-wider uppercase transition-all shadow-lg shadow-amber-500/10 text-xs">
+                            🚀 lanzar pregunta (Sin Opciones)
                         </button>
-                        <button onclick="hideQuestionOnOverlay()" class="w-full py-3 bg-slate-800 hover:bg-slate-700 text-slate-300 font-bold rounded-xl tracking-wider uppercase transition-all">
+                        <button id="ctrl-btn-reveal-next" onclick="revealNextOption()" class="w-full py-3 bg-blue-600 hover:bg-blue-500 text-white font-black rounded-xl tracking-wider uppercase transition-all shadow-lg text-xs">
+                            ➕ Desvelar Siguiente Opción
+                        </button>
+                        <button onclick="hideQuestionOnOverlay()" class="w-full py-3 bg-slate-800 hover:bg-slate-700 text-slate-300 font-bold rounded-xl tracking-wider uppercase transition-all text-xs">
                             🙈 Ocultar Todo de OBS
                         </button>
                     </div>
@@ -507,7 +510,7 @@
             {
                 level: "Nivel 10 (Intermedio) - ⭐ Hito 2 ⭐",
                 points: 32000,
-                question: "En 'El Gran Hotel Budapest' de Wes Anderson, ¿cómo se llama el codiciado cuadro renacentista que desata toda la trama?",
+                question: "En 'El Gran Hotel Budapest' de Wes Anderson, ¿como se llama el codiciado cuadro renacentista que desata toda la trama?",
                 options: ["A: El niño con manzana", "B: La joven de la perla", "C: El lobo herido", "D: Retrato de Madame D"],
                 correct: "A",
                 prize: {
@@ -547,7 +550,7 @@
             {
                 level: "Nivel 15 (Difícil) - ⭐ Hito Final ⭐",
                 points: 1000000,
-                question: "En 'Reservoir Dogs' (1992), during la famosa y brutal escena de la tortura al policía al ritmo de 'Stuck in the Middle with You', ¿cuál es el color asignado al sádico personaje interpretado por Michael Madsen?",
+                question: "En 'Reservoir Dogs' (1992), durante la famosa y brutal escena de la tortura al policía al ritmo de 'Stuck in the Middle with You', ¿cuál es el color asignado al sádico personaje interpretado por Michael Madsen?",
                 options: ["A: Señor Rubio", "B: Señor Rosa", "C: Señor Blanco", "D: Señor Azul"],
                 correct: "A",
                 prize: {
@@ -646,7 +649,8 @@
             timerActive: false,
             prizeActive: false,
             activePrizeData: null,
-            playerCagadoActive: false
+            playerCagadoActive: false,
+            visibleOptionsCount: 0 // Variable nueva añadida
         };
 
         let currentRole = "";
@@ -789,7 +793,6 @@
             AudioFX.playError();
             saveStateToLocalStorage();
 
-            // Desaparece automáticamente a los 4 segundos
             setTimeout(() => {
                 const curr = JSON.parse(localStorage.getItem('quiznefilo_state'));
                 curr.playerCagadoActive = false;
@@ -821,6 +824,149 @@
             });
         }
 
+        // LÓGICA DE LANZAR Y DESVELAR SECUENCIAL
+        function sendQuestionToOverlay() { 
+            gameState.overlayVisible = true; 
+            gameState.highlightedOption = null; 
+            gameState.resolvedState = null; 
+            gameState.timerActive = false; 
+            gameState.wildcard_ruleta_active = false; 
+            gameState.visibleOptionsCount = 0; // Al lanzar la pregunta, 0 opciones visibles
+            AudioFX.playBeep(330, 0.4, 'sine'); 
+            saveStateToLocalStorage(); 
+        }
+
+        function revealNextOption() {
+            if (gameState.visibleOptionsCount < 4) {
+                gameState.visibleOptionsCount++;
+                AudioFX.playClick();
+                saveStateToLocalStorage();
+            }
+        }
+
+        function hideQuestionOnOverlay() { 
+            gameState.overlayVisible = false; 
+            gameState.timerActive = false; 
+            gameState.wildcard_ruleta_active = false; 
+            gameState.visibleOptionsCount = 0;
+            saveStateToLocalStorage(); 
+        }
+
+        function prevQuestion() { if (gameState.currentIdx > 0) { gameState.currentIdx--; gameState.highlightedOption = null; gameState.resolvedState = null; gameState.eliminatedOptions = []; gameState.ruletaFinished = false; gameState.ruletaTargetIndex = -1; gameState.visibleOptionsCount = 0; saveStateToLocalStorage(); } }
+        function nextQuestion() { if (gameState.currentIdx < gameState.questions.length - 1) { gameState.currentIdx++; gameState.highlightedOption = null; gameState.resolvedState = null; gameState.eliminatedOptions = []; gameState.ruletaFinished = false; gameState.ruletaTargetIndex = -1; gameState.visibleOptionsCount = 0; saveStateToLocalStorage(); } }
+
+        function setTensionOption(opt) { if (gameState.resolvedState) return; gameState.highlightedOption = opt; AudioFX.playTension(); saveStateToLocalStorage(); }
+
+        function resolveAnswer(isCorrect) {
+            if (!gameState.highlightedOption) return; const q = gameState.questions[gameState.currentIdx];
+            if (isCorrect) {
+                gameState.resolvedState = "correct"; gameState.points += q.points;
+                if (q.prize) { gameState.prizeActive = true; gameState.activePrizeData = q.prize; AudioFX.playPrizeFanfare(); startConfettiShower(); }
+                else AudioFX.playSuccess();
+            } else { gameState.resolvedState = "wrong"; AudioFX.playError(); }
+            saveStateToLocalStorage();
+        }
+
+        function dismissPrize() { gameState.prizeActive = false; stopConfettiShower(); saveStateToLocalStorage(); }
+
+        function startConcurisilloTimer(type) {
+            gameState.timerActive = true; gameState.timerType = type; gameState.timerSecs = 60; saveStateToLocalStorage();
+            if (timerInterval) clearInterval(timerInterval);
+            timerInterval = setInterval(() => {
+                const curr = JSON.parse(localStorage.getItem('quiznefilo_state'));
+                if (curr.timerSecs > 1) {
+                    curr.timerSecs--; gameState.timerSecs = curr.timerSecs;
+                    localStorage.setItem('quiznefilo_state', JSON.stringify(curr)); applyStateToUI();
+                } else {
+                    clearInterval(timerInterval); curr.timerSecs = 0; curr.timerActive = false;
+                    gameState.timerSecs = 0; gameState.timerActive = false;
+                    localStorage.setItem('quiznefilo_state', JSON.stringify(curr)); applyStateToUI();
+                }
+            }, 1000);
+        }
+
+        function triggerLlamadaWildcard() { if (gameState.wildcard_llamada_used) return; gameState.wildcard_llamada_used = true; gameState.wildcard_llamada_active = true; startConcurisilloTimer("llamada"); }
+        function triggerChatWildcard() { if (gameState.wildcard_chat_used) return; gameState.wildcard_chat_used = true; gameState.wildcard_chat_active = true; startConcurisilloTimer("chat"); }
+
+        function triggerRuletaWildcard() {
+            if (gameState.wildcard_ruleta_used) return;
+            gameState.wildcard_ruleta_used = true;
+            gameState.wildcard_ruleta_active = true;
+            gameState.ruletaFinished = false;
+            // Si tiran ruleta de eliminar, forzamos que se muestren todas las opciones en OBS
+            gameState.visibleOptionsCount = 4;
+            saveStateToLocalStorage();
+
+            setTimeout(() => {
+                const winnerIdx = Math.floor(Math.random() * ruletaItems.length);
+                const sector = ruletaItems[winnerIdx];
+                const anglePerSector = 360 / ruletaItems.length;
+                const targetSectorAngle = 360 - (winnerIdx * anglePerSector + (anglePerSector / 2));
+                const spins = 2160; 
+
+                gameState.ruletaTargetAngle = spins + targetSectorAngle;
+                gameState.ruletaTargetIndex = winnerIdx;
+
+                const q = gameState.questions[gameState.currentIdx];
+                const incorrectOptions = ["A", "B", "C", "D"].filter(opt => opt !== q.correct);
+                const shuffledIncorrect = incorrectOptions.sort(() => Math.random() - 0.5);
+                gameState.eliminatedOptions = shuffledIncorrect.slice(0, sector.count);
+
+                saveStateToLocalStorage();
+
+                let clickDelay = 60;
+                const playSpinClicks = () => {
+                    if (clickDelay > 450) return;
+                    AudioFX.playClick(); clickDelay += 25;
+                    setTimeout(playSpinClicks, clickDelay);
+                };
+                playSpinClicks();
+
+                setTimeout(() => {
+                    const curr = JSON.parse(localStorage.getItem('quiznefilo_state'));
+                    curr.ruletaFinished = true; gameState.ruletaFinished = true;
+
+                    if (sector.count > 0) AudioFX.playSuccess();
+                    else AudioFX.playError();
+
+                    localStorage.setItem('quiznefilo_state', JSON.stringify(curr)); applyStateToUI();
+
+                    setTimeout(() => {
+                        const postSpin = JSON.parse(localStorage.getItem('quiznefilo_state'));
+                        postSpin.wildcard_ruleta_active = false; gameState.wildcard_ruleta_active = false;
+                        localStorage.setItem('quiznefilo_state', JSON.stringify(postSpin)); applyStateToUI();
+                    }, 4000);
+
+                }, 4500);
+            }, 200);
+        }
+
+        function saveQuestions() {
+            try {
+                const jsonText = document.getElementById('ctrl-questions-json').value;
+                const parsed = JSON.parse(jsonText);
+                if (Array.isArray(parsed)) {
+                    gameState.questions = parsed; gameState.currentIdx = 0; gameState.highlightedOption = null;
+                    gameState.resolvedState = null; gameState.prizeActive = false; gameState.eliminatedOptions = [];
+                    gameState.ruletaFinished = false; gameState.ruletaTargetIndex = -1; gameState.visibleOptionsCount = 0;
+                    saveStateToLocalStorage(); alert("¡Preguntas guardadas con éxito!");
+                } else alert("Error: El JSON debe ser un array de preguntas.");
+            } catch (err) { alert("Error de sintaxis en el JSON:\n" + err.message); }
+        }
+
+        function resetGame() {
+            if (timerInterval) clearInterval(timerInterval); stopConfettiShower();
+            gameState = {
+                currentIdx: 0, questions: [...defaultQuestions], overlayVisible: false, highlightedOption: null, resolvedState: null,
+                wildcard_llamada_used: false, wildcard_chat_used: false, wildcard_ruleta_used: false,
+                wildcard_llamada_active: false, wildcard_chat_active: false, wildcard_ruleta_active: false,
+                eliminatedOptions: [], points: 0, ruletaTargetAngle: 0, ruletaTargetIndex: -1, ruletaFinished: false,
+                timerSecs: 60, timerType: "chat", timerActive: false, prizeActive: false, activePrizeData: null,
+                playerCagadoActive: false, visibleOptionsCount: 0
+            };
+            saveStateToLocalStorage();
+        }
+
         /******************************************************************
          * RE-RENDERIZADO PRINCIPAL DE LA UI
          ******************************************************************/
@@ -840,6 +986,13 @@
                     el.className = (q.correct === opt) ? "text-emerald-500 font-extrabold mr-2" : "text-amber-500 font-bold mr-2";
                     el.textContent = (q.correct === opt) ? `${opt} (OK):` : `${opt}:`;
                 });
+            });
+
+            // Deshabilitar botón de desvelar si ya están las 4 fuera
+            document.querySelectorAll('#ctrl-btn-reveal-next').forEach(btn => {
+                btn.disabled = gameState.visibleOptionsCount >= 4;
+                if (gameState.visibleOptionsCount >= 4) btn.classList.add('opacity-40', 'cursor-not-allowed');
+                else btn.classList.remove('opacity-40', 'cursor-not-allowed');
             });
 
             document.querySelectorAll('#ctrl-prize-active-text').forEach(el => el.textContent = (gameState.prizeActive && gameState.activePrizeData) ? `${gameState.activePrizeData.emoji} ${gameState.activePrizeData.title}` : "Ninguno activo actualmente");
@@ -872,21 +1025,31 @@
                 vp.querySelector('#ov-question-text').textContent = q.question;
                 vp.querySelector('#ov-points-display').textContent = `${gameState.points} pts`;
 
-                ["A", "B", "C", "D"].forEach((opt, idx) => {
-                    const boxEl = vp.querySelector(`#ov-opt-${opt}`); vp.querySelector(`#ov-opt-text-${opt}`).textContent = q.options[idx] || "";
-                    boxEl.className = "relative overflow-hidden px-8 py-4 bg-slate-950/95 border border-slate-800 rounded-xl flex items-center transition-all duration-300";
-                    if (gameState.ruletaFinished && gameState.eliminatedOptions && gameState.eliminatedOptions.includes(opt)) boxEl.classList.add('opacity-0', 'pointer-events-none');
+                // Control de visibilidad secuencial de las cajas en OBS
+                const optMapping = ["A", "B", "C", "D"];
+                optMapping.forEach((opt, idx) => {
+                    const boxEl = vp.querySelector(`#ov-opt-${opt}`); 
+                    vp.querySelector(`#ov-opt-text-${opt}`).textContent = q.options[idx] || "";
+                    
+                    // Si el índice de la opción es menor que las permitidas por el contador, se muestra. Si no, hidden.
+                    if (idx < gameState.visibleOptionsCount) {
+                        boxEl.classList.remove('hidden');
+                        boxEl.className = "relative overflow-hidden px-8 py-4 bg-slate-950/95 border border-slate-800 rounded-xl flex items-center transition-all duration-300";
+                        if (gameState.ruletaFinished && gameState.eliminatedOptions && gameState.eliminatedOptions.includes(opt)) boxEl.classList.add('opacity-0', 'pointer-events-none');
+                    } else {
+                        boxEl.className = "hidden";
+                    }
                 });
 
                 if (gameState.highlightedOption) {
                     const b = vp.querySelector(`#ov-opt-${gameState.highlightedOption}`);
-                    if (b) b.className = "relative overflow-hidden px-8 py-4 bg-amber-500/20 border-2 border-amber-500 rounded-xl flex items-center transition-all duration-300 animate-pulse-gold";
+                    if (b && !b.classList.contains('hidden')) b.className = "relative overflow-hidden px-8 py-4 bg-amber-500/20 border-2 border-amber-500 rounded-xl flex items-center transition-all duration-300 animate-pulse-gold";
                 }
 
                 if (gameState.resolvedState) {
-                    const cb = vp.querySelector(`#ov-opt-${q.correct}`); if (cb) cb.className = "relative overflow-hidden px-8 py-4 bg-emerald-500/20 border-2 border-emerald-500 rounded-xl flex items-center transition-all duration-300 neon-border-green";
+                    const cb = vp.querySelector(`#ov-opt-${q.correct}`); if (cb && !cb.classList.contains('hidden')) cb.className = "relative overflow-hidden px-8 py-4 bg-emerald-500/20 border-2 border-emerald-500 rounded-xl flex items-center transition-all duration-300 neon-border-green";
                     if (gameState.resolvedState === "wrong" && gameState.highlightedOption && gameState.highlightedOption !== q.correct) {
-                        const wb = vp.querySelector(`#ov-opt-${gameState.highlightedOption}`); if (wb) wb.className = "relative overflow-hidden px-8 py-4 bg-red-500/20 border-2 border-red-500 rounded-xl flex items-center transition-all duration-300 neon-border-red animate-shake";
+                        const wb = vp.querySelector(`#ov-opt-${gameState.highlightedOption}`); if (wb && !wb.classList.contains('hidden')) wb.className = "relative overflow-hidden px-8 py-4 bg-red-500/20 border-2 border-red-500 rounded-xl flex items-center transition-all duration-300 neon-border-red animate-shake";
                     }
                 }
 
@@ -942,123 +1105,6 @@
             if (!element) return;
             if (used) { element.classList.add('opacity-25', 'line-through', 'border-red-600/50'); element.classList.remove('border-amber-500/40'); }
             else { element.classList.remove('opacity-25', 'line-through', 'border-red-600/50'); element.classList.add('border-amber-500/40'); }
-        }
-
-        function sendQuestionToOverlay() { gameState.overlayVisible = true; gameState.highlightedOption = null; gameState.resolvedState = null; gameState.timerActive = false; gameState.wildcard_ruleta_active = false; AudioFX.playBeep(330, 0.4, 'sine'); saveStateToLocalStorage(); }
-        function hideQuestionOnOverlay() { gameState.overlayVisible = false; gameState.timerActive = false; gameState.wildcard_ruleta_active = false; saveStateToLocalStorage(); }
-
-        function prevQuestion() { if (gameState.currentIdx > 0) { gameState.currentIdx--; gameState.highlightedOption = null; gameState.resolvedState = null; gameState.eliminatedOptions = []; gameState.ruletaFinished = false; gameState.ruletaTargetIndex = -1; saveStateToLocalStorage(); } }
-        function nextQuestion() { if (gameState.currentIdx < gameState.questions.length - 1) { gameState.currentIdx++; gameState.highlightedOption = null; gameState.resolvedState = null; gameState.eliminatedOptions = []; gameState.ruletaFinished = false; gameState.ruletaTargetIndex = -1; saveStateToLocalStorage(); } }
-
-        /* ... Funciones de Respuestas y Tensión ... */
-        function setTensionOption(opt) { if (gameState.resolvedState) return; gameState.highlightedOption = opt; AudioFX.playTension(); saveStateToLocalStorage(); }
-
-        function resolveAnswer(isCorrect) {
-            if (!gameState.highlightedOption) return; const q = gameState.questions[gameState.currentIdx];
-            if (isCorrect) {
-                gameState.resolvedState = "correct"; gameState.points += q.points;
-                if (q.prize) { gameState.prizeActive = true; gameState.activePrizeData = q.prize; AudioFX.playPrizeFanfare(); startConfettiShower(); }
-                else AudioFX.playSuccess();
-            } else { gameState.resolvedState = "wrong"; AudioFX.playError(); }
-            saveStateToLocalStorage();
-        }
-
-        function dismissPrize() { gameState.prizeActive = false; stopConfettiShower(); saveStateToLocalStorage(); }
-
-        function startConcurisilloTimer(type) {
-            gameState.timerActive = true; gameState.timerType = type; gameState.timerSecs = 60; saveStateToLocalStorage();
-            if (timerInterval) clearInterval(timerInterval);
-            timerInterval = setInterval(() => {
-                const curr = JSON.parse(localStorage.getItem('quiznefilo_state'));
-                if (curr.timerSecs > 1) {
-                    curr.timerSecs--; gameState.timerSecs = curr.timerSecs;
-                    localStorage.setItem('quiznefilo_state', JSON.stringify(curr)); applyStateToUI();
-                } else {
-                    clearInterval(timerInterval); curr.timerSecs = 0; curr.timerActive = false;
-                    gameState.timerSecs = 0; gameState.timerActive = false;
-                    localStorage.setItem('quiznefilo_state', JSON.stringify(curr)); applyStateToUI();
-                }
-            }, 1000);
-        }
-
-        function triggerLlamadaWildcard() { if (gameState.wildcard_llamada_used) return; gameState.wildcard_llamada_used = true; gameState.wildcard_llamada_active = true; startConcurisilloTimer("llamada"); }
-        function triggerChatWildcard() { if (gameState.wildcard_chat_used) return; gameState.wildcard_chat_used = true; gameState.wildcard_chat_active = true; startConcurisilloTimer("chat"); }
-
-        function triggerRuletaWildcard() {
-            if (gameState.wildcard_ruleta_used) return;
-            gameState.wildcard_ruleta_used = true;
-            gameState.wildcard_ruleta_active = true;
-            gameState.ruletaFinished = false;
-            saveStateToLocalStorage();
-
-            setTimeout(() => {
-                const winnerIdx = Math.floor(Math.random() * ruletaItems.length);
-                const sector = ruletaItems[winnerIdx];
-                const anglePerSector = 360 / ruletaItems.length;
-                const targetSectorAngle = 360 - (winnerIdx * anglePerSector + (anglePerSector / 2));
-                const spins = 2160; 
-
-                gameState.ruletaTargetAngle = spins + targetSectorAngle;
-                gameState.ruletaTargetIndex = winnerIdx;
-
-                const q = gameState.questions[gameState.currentIdx];
-                const incorrectOptions = ["A", "B", "C", "D"].filter(opt => opt !== q.correct);
-                const shuffledIncorrect = incorrectOptions.sort(() => Math.random() - 0.5);
-                gameState.eliminatedOptions = shuffledIncorrect.slice(0, sector.count);
-
-                saveStateToLocalStorage();
-
-                let clickDelay = 60;
-                const playSpinClicks = () => {
-                    if (clickDelay > 450) return;
-                    AudioFX.playClick(); clickDelay += 25;
-                    setTimeout(playSpinClicks, clickDelay);
-                };
-                playSpinClicks();
-
-                setTimeout(() => {
-                    const curr = JSON.parse(localStorage.getItem('quiznefilo_state'));
-                    curr.ruletaFinished = true; gameState.ruletaFinished = true;
-
-                    if (sector.count > 0) AudioFX.playSuccess();
-                    else AudioFX.playError();
-
-                    localStorage.setItem('quiznefilo_state', JSON.stringify(curr)); applyStateToUI();
-
-                    setTimeout(() => {
-                        const postSpin = JSON.parse(localStorage.getItem('quiznefilo_state'));
-                        postSpin.wildcard_ruleta_active = false; gameState.wildcard_ruleta_active = false;
-                        localStorage.setItem('quiznefilo_state', JSON.stringify(postSpin)); applyStateToUI();
-                    }, 4000);
-
-                }, 4500);
-            }, 200);
-        }
-
-        function saveQuestions() {
-            try {
-                const jsonText = document.getElementById('ctrl-questions-json').value;
-                const parsed = JSON.parse(jsonText);
-                if (Array.isArray(parsed)) {
-                    gameState.questions = parsed; gameState.currentIdx = 0; gameState.highlightedOption = null;
-                    gameState.resolvedState = null; gameState.prizeActive = false; gameState.eliminatedOptions = [];
-                    gameState.ruletaFinished = false; gameState.ruletaTargetIndex = -1;
-                    saveStateToLocalStorage(); alert("¡Preguntas guardadas con éxito!");
-                } else alert("Error: El JSON debe ser un array de preguntas.");
-            } catch (err) { alert("Error de sintaxis en el JSON:\n" + err.message); }
-        }
-
-        function resetGame() {
-            if (timerInterval) clearInterval(timerInterval); stopConfettiShower();
-            gameState = {
-                currentIdx: 0, questions: [...defaultQuestions], overlayVisible: false, highlightedOption: null, resolvedState: null,
-                wildcard_llamada_used: false, wildcard_chat_used: false, wildcard_ruleta_used: false,
-                wildcard_llamada_active: false, wildcard_chat_active: false, wildcard_ruleta_active: false,
-                eliminatedOptions: [], points: 0, ruletaTargetAngle: 0, ruletaTargetIndex: -1, ruletaFinished: false,
-                timerSecs: 60, timerType: "chat", timerActive: false, prizeActive: false, activePrizeData: null,
-                playerCagadoActive: false
-            };
-            saveStateToLocalStorage();
         }
     </script>
 </body>
