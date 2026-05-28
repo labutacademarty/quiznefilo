@@ -2650,7 +2650,7 @@ function acceptSoborno() {
 
         // ACTIVAR LA RULETA DEL CAOS CON ELIMINACIÓN DE RESPUESTAS (Mecánica Jugable)
 
-        function triggerRuletaWildcard() {
+      function triggerRuletaWildcard() {
 
             if (gameState.wildcard_ruleta_used) return;
 
@@ -2779,6 +2779,102 @@ function acceptSoborno() {
             }, 4500);
 
         }
+
+
+
+        function saveQuestions() {
+
+            try {
+
+                const jsonText = document.getElementById('ctrl-questions-json').value;
+
+                const parsed = JSON.parse(jsonText);
+
+                if (Array.isArray(parsed)) {
+
+                    gameState.questions = parsed;
+
+                    gameState.currentIdx = 0;
+
+                    gameState.highlightedOption = null;
+
+                    gameState.resolvedState = null;
+
+                    gameState.prizeActive = false;
+
+                    gameState.eliminatedOptions = [];
+
+                    gameState.ruletaFinished = false;
+
+                    gameState.ruletaTargetIndex = -1;
+
+                    saveStateToLocalStorage();
+
+                    alert("¡Preguntas guardadas con éxito en el sistema local!");
+
+                } else {
+
+                    alert("Error: El JSON debe ser un array de preguntas.");
+
+                }
+
+            } catch (err) {
+
+                alert("Error de sintaxis en el JSON de preguntas:\n" + err.message);
+
+            }
+
+        }
+
+
+
+        function resetGame() {
+
+            gameState = {
+
+                currentIdx: 0,
+
+                questions: [...defaultQuestions],
+
+                overlayVisible: false,
+
+                highlightedOption: null,
+
+                resolvedState: null,
+
+                wildcard_llamada_used: false,
+
+                wildcard_chat_used: false,
+
+                wildcard_ruleta_used: false,
+
+                wildcard_llamada_active: false,
+
+                wildcard_chat_active: false,
+
+                wildcard_ruleta_active: false,
+
+                eliminatedOptions: [],
+
+                points: 0,
+
+                ruletaTargetAngle: 0,
+
+                ruletaTargetIndex: -1,
+
+                ruletaFinished: false,
+
+                timerSecs: 60,
+
+                timerType: "chat",
+
+                timerActive: false,
+
+                prizeActive: false,
+
+                activePrizeData: null
+
+            };
 
 
 
