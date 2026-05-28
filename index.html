@@ -62,9 +62,10 @@
         .animate-shake {
             animation: shake 0.2s 3 ease-in-out;
         }
-        /* Transición de Ruleta */
+        /* Transición de Ruleta Corregida */
         .ruleta-transition {
             transition: transform 4.5s cubic-bezier(0.1, 0.8, 0.1, 1);
+            transform-origin: center; /* Crucial para rotar sobre su propio eje */
         }
         /* Confeti nativo animado */
         @keyframes confetti-fall {
@@ -437,7 +438,7 @@
     </div>
 
     <script>
-        // NUEVA LISTA DE PREGUNTAS ACTUALIZADA
+        // LISTA DE PREGUNTAS INCORPORADA COMPLETAMENTE
         const defaultQuestions = [
             {
                 "level": "Nivel 1 (Fácil)",
@@ -589,7 +590,7 @@
                     "A: La banda sonora de '2001: Una odisea del espacio'",
                     "B: Un póster de 'Lolita'",
                     "C: El vinilo de 'Teléfono rojo? Volamos hacia Moscú'",
-                    "D: Un single de los Beach Boys"
+                    "D: Un sínge de los Beach Boys"
                 ],
                 "correct": "A"
             },
@@ -683,7 +684,7 @@
                     gain.gain.setValueAtTime(0.12, now + idx * 0.12);
                     gain.gain.exponentialRampToValueAtTime(0.01, now + idx * 0.12 + 0.4);
                     osc.connect(gain); gain.connect(this.ctx.destination);
-                    osc.start(now + idx * 0.12); osc.stop(now + idx * 0.12 + 0.5);
+                    osc.start(now + idx * 0.12); osc.stop(now + idx * 0.12 + 0.4);
                 });
             },
             playTension() { this.playBeep(220, 0.4, 'triangle'); },
@@ -931,9 +932,6 @@
 
         function setTensionOption(opt) { if (gameState.resolvedState) return; gameState.highlightedOption = opt; AudioFX.playTension(); saveStateToLocalStorage(); }
 
-        /******************************************************************
-         * RESOLVER ACERTADAS / FALLADAS
-         ******************************************************************/
         function resolveAnswer(isCorrect) {
             if (!gameState.highlightedOption) return; const q = gameState.questions[gameState.currentIdx];
             if (isCorrect) {
@@ -965,20 +963,27 @@
         function triggerLlamadaWildcard() { if (gameState.wildcard_llamada_used) return; gameState.wildcard_llamada_used = true; gameState.wildcard_llamada_active = true; startConcurisilloTimer("llamada"); }
         function triggerChatWildcard() { if (gameState.wildcard_chat_used) return; gameState.wildcard_chat_used = true; gameState.wildcard_chat_active = true; startConcurisilloTimer("chat"); }
 
+        // NUEVA FUNCIÓN DE GIRO REALISTA DE RULETA
         function triggerRuletaWildcard() {
             if (gameState.wildcard_ruleta_used) return;
+            
             gameState.wildcard_ruleta_used = true;
             gameState.wildcard_ruleta_active = true;
             gameState.ruletaFinished = false;
-            gameState.visibleOptionsCount = 4;
+            gameState.ruletaTargetAngle = 0;
+            gameState.ruletaTargetIndex = -1;
+            gameState.eliminatedOptions = [];
+            gameState.visibleOptionsCount = 4; // Asegura que estén visibles para el descarte visual
             saveStateToLocalStorage();
 
+            // Delay estratégico para que el overlay monte la ruleta en DOM antes de rotarla
             setTimeout(() => {
                 const winnerIdx = Math.floor(Math.random() * ruletaItems.length);
                 const sector = ruletaItems[winnerIdx];
                 const anglePerSector = 360 / ruletaItems.length;
+                
                 const targetSectorAngle = 360 - (winnerIdx * anglePerSector + (anglePerSector / 2));
-                const spins = 2160; 
+                const spins = 2160; // 6 vueltas completas
 
                 gameState.ruletaTargetAngle = spins + targetSectorAngle;
                 gameState.ruletaTargetIndex = winnerIdx;
@@ -998,6 +1003,7 @@
                 };
                 playSpinClicks();
 
+                // Esperamos los 4.5s exactos de la transición CSS
                 setTimeout(() => {
                     const curr = JSON.parse(localStorage.getItem('quiznefilo_state'));
                     curr.ruletaFinished = true; gameState.ruletaFinished = true;
@@ -1007,6 +1013,7 @@
 
                     localStorage.setItem('quiznefilo_state', JSON.stringify(curr)); applyStateToUI();
 
+                    // Mantiene el resultado en pantalla unos segundos y luego oculta el panel
                     setTimeout(() => {
                         const postSpin = JSON.parse(localStorage.getItem('quiznefilo_state'));
                         postSpin.wildcard_ruleta_active = false; gameState.wildcard_ruleta_active = false;
@@ -1014,7 +1021,7 @@
                     }, 4000);
 
                 }, 4500);
-            }, 200);
+            }, 300);
         }
 
         function saveQuestions() {
